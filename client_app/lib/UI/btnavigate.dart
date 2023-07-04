@@ -1,3 +1,4 @@
+import 'package:client_app/screen/home.dart';
 import 'package:flutter/material.dart';
 
 import 'setting.dart';
@@ -28,10 +29,7 @@ class _BottomNavigationBarExampleState
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0: Home',
-      style: optionStyle,
-    ),
+    Home(),
     Text(
       'Index 1: Business',
       style: optionStyle,
@@ -40,10 +38,7 @@ class _BottomNavigationBarExampleState
       'Index 2: School',
       style: optionStyle,
     ),
-    Text(
-      'Index 3: Setting',
-      style: optionStyle,
-    ),
+    SettingUI()
   ];
 
   void _onItemTapped(int index) {
@@ -51,22 +46,11 @@ class _BottomNavigationBarExampleState
       _selectedIndex = index;
     });
 
-    if(index == 3){
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const SettingUI(),
-        ),
-      );
-
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('BottomNavigationBar Sample'),
-      ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
