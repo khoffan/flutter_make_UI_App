@@ -8,38 +8,77 @@ class Information extends StatefulWidget {
 }
 
 class _InformationState extends State<Information> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController amountController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Information'),
+          title: Text('Information'),
         ),
         body: Padding(
           padding: const EdgeInsets.all(12),
           child: Form(
+            key: _formKey,
             child: Column(
             children: [
               TextFormField(
-                decoration: InputDecoration(
+                autofocus: true,
+                controller: nameController,
+                validator: (str){
+                  if(str == null || str.isEmpty){
+                    return "Plese your add data";
+                  }
+                  return null;
+                },
+                decoration: new InputDecoration(
                   labelText: 'Name',
                 ),
-                autofocus: true,
               ),
               TextFormField(
-                decoration: InputDecoration(
+                decoration: new InputDecoration(
                   labelText: 'Descriptions',
                 ),
+                controller: descriptionController,
+                validator: (str){
+                  if(str == null || str.isEmpty){
+                    return "Plese your add data";
+                  }
+                  return null;
+                },
                 
               ),
               TextFormField(
-                decoration: InputDecoration(
+                decoration: new InputDecoration(
                   labelText: 'amount',
                 ),
                 keyboardType: TextInputType.number,
+                controller: amountController,
+                validator: (str){
+                  if(str == null || str.isEmpty){
+                    return "Please provide your data";
+                  }
+                  if(double.parse(str) <= 0){
+                    return 'please provide number more 0';
+                  }
+                  return null;
+                },
               ),
               TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    if(_formKey.currentState?.validate() ?? false){
+                      var name = nameController.text;
+                      var des = nameController.text;
+                      var money = nameController.text;
+
+                      print(name);
+                      print(des);
+                      print(money);
+                      Navigator.of(context).pop();
+                    }
                   },
                   child: Text(
                     "AddInformation",

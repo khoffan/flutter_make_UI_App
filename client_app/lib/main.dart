@@ -1,4 +1,6 @@
+import 'package:client_app/providers/info_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'UI/btnavigate.dart';
 void main() {
@@ -10,12 +12,19 @@ class Myapp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context){
+          return InfoProvider();
+        }),
+      ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: BottomNavigationBarExampleApp()
       ),
-      home: BottomNavigationBarExampleApp()
     );
   }
 }
