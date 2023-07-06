@@ -1,4 +1,8 @@
+import 'package:client_app/providers/info_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../models/info.dart';
 
 class Information extends StatefulWidget {
   const Information({super.key});
@@ -71,12 +75,18 @@ class _InformationState extends State<Information> {
                   onPressed: () {
                     if(_formKey.currentState?.validate() ?? false){
                       var name = nameController.text;
-                      var des = nameController.text;
-                      var money = nameController.text;
+                      var des = descriptionController.text;
+                      var money = amountController.text;
 
-                      print(name);
-                      print(des);
-                      print(money);
+                      Infomations info = Infomations(
+                        name: name,
+                        description: des,
+                        amount: double.parse(money),
+                        date: DateTime.now(),
+                      );
+
+                      var provider = Provider.of<InfoProvider>(context, listen: false);
+                      provider.addInfomation(info);
                       Navigator.of(context).pop();
                     }
                   },

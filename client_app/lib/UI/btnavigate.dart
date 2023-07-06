@@ -1,3 +1,4 @@
+import 'package:client_app/screen/chatpage.dart';
 import 'package:client_app/screen/home.dart';
 import 'package:flutter/material.dart';
 
@@ -28,12 +29,9 @@ class _BottomNavigationBarExampleState
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
+  static List<Widget> _widgetOptions = <Widget>[
     Home(),
-    Text(
-      'Index 1: Business',
-      style: optionStyle,
-    ),
+    ChatPage(),
     Text(
       'Index 2: School',
       style: optionStyle,
