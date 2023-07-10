@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../screen/loginscreen.dart';
+
 
 class SettingUI extends StatefulWidget {
   const SettingUI({super.key});
@@ -91,7 +93,14 @@ class _SettingUIState extends State<SettingUI> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LoginScreen()
+                    ),
+                  );
+                },
                 child: Text('Sign Out', style: TextStyle(
                   fontSize: 16,
                   letterSpacing: 2.2, color: Colors.black
