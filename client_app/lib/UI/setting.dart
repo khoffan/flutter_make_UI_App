@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../providers/user_provider.dart';
 import '../screen/loginscreen.dart';
 
 
@@ -93,7 +94,8 @@ class _SettingUIState extends State<SettingUI> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                onPressed: () {
+                onPressed: () async {
+                  await Users.setLogin(false);
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(

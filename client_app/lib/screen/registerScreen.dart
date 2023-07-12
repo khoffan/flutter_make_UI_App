@@ -1,10 +1,13 @@
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
+
+import '../providers/user_provider.dart';
 import 'loginscreen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -24,7 +27,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController curpass = TextEditingController();
 
   Future SignupConnect() async {
-    String url = "http://172.22.118.192/api_flutter/register.php";
+    String url = "http://172.22.118.252/api_flutter/register.php";
     final res = await http.post(Uri.parse(url), body: {
       "name": name.text,
       "email": email.text,
@@ -39,6 +42,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           MaterialPageRoute(builder: (context) => RegisterScreen()));
         
       } else {
+        await Users.setLogin(true);
          Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => LoginScreen()));
       }

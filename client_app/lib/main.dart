@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'UI/btnavigate.dart';
+import 'providers/check_login.dart';
 import 'screen/loginscreen.dart';
 void main() {
   runApp(Myapp());
@@ -24,7 +25,7 @@ class Myapp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: LoginScreen()
+        home: checkLogin()
       ),
     );
   }
