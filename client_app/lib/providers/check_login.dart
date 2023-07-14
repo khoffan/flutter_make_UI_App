@@ -18,14 +18,14 @@ class _checkLoginState extends State<checkLogin> {
     if(login == false){
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => BottomNavigationBarExampleApp(),
+          builder: (context) => LoginScreen(),
         )
       );
     }
     else {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => LoginScreen(),
+          builder: (context) => BottomNavigationBarExampleApp(),
         )
       );
     }
