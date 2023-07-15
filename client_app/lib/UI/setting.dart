@@ -1,9 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../providers/user_provider.dart';
 import '../screen/loginscreen.dart';
-
 
 class SettingUI extends StatefulWidget {
   const SettingUI({super.key});
@@ -17,19 +17,23 @@ class _SettingUIState extends State<SettingUI> {
   bool valNotify2 = false;
   bool valNotify3 = false;
 
-  onChangeFunction1(bool newValue1){
+  final auth = FirebaseAuth.instance;
+
+  onChangeFunction1(bool newValue1) {
     setState(() {
-      valNotify1=newValue1;
+      valNotify1 = newValue1;
     });
   }
-  onChangeFunction2(bool newValue2){
+
+  onChangeFunction2(bool newValue2) {
     setState(() {
-      valNotify2=newValue2;
+      valNotify2 = newValue2;
     });
   }
-  onChangeFunction3(bool newValue3){
+
+  onChangeFunction3(bool newValue3) {
     setState(() {
-      valNotify3=newValue3;
+      valNotify3 = newValue3;
     });
   }
 
@@ -60,15 +64,16 @@ class _SettingUIState extends State<SettingUI> {
                   color: Colors.blue,
                 ),
                 SizedBox(height: 10),
-                Text('Accout', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                Text('Accout',
+                    style:
+                        TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
               ],
             ),
             Divider(height: 20, thickness: 1),
             SizedBox(height: 10),
             bulidAccoutOption(context, "Chenge Passord"),
             bulidAccoutOption(context, "Privacy"),
-            bulidAccoutOption(context, "Name"),
-
+            bulidAccoutOption(context, "Account"),
             SizedBox(height: 20),
             Row(
               children: [
@@ -77,7 +82,9 @@ class _SettingUIState extends State<SettingUI> {
                   color: Colors.blue,
                 ),
                 SizedBox(width: 10),
-                Text('Notification', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                Text('Notification',
+                    style:
+                        TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
               ],
             ),
             Divider(height: 20, thickness: 1),
@@ -96,17 +103,17 @@ class _SettingUIState extends State<SettingUI> {
                 ),
                 onPressed: () async {
                   await Users.setLogin(false);
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LoginScreen()
-                    ),
-                  );
+                  auth.signOut().then((value) {
+                    
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                    );
+                  });
                 },
-                child: Text('Sign Out', style: TextStyle(
-                  fontSize: 16,
-                  letterSpacing: 2.2, color: Colors.black
-                )),
+                child: Text('Sign Out',
+                    style: TextStyle(
+                        fontSize: 16, letterSpacing: 2.2, color: Colors.black)),
               ),
             ),
           ],
@@ -115,17 +122,19 @@ class _SettingUIState extends State<SettingUI> {
     );
   }
 
-  Padding builNotificationOption(String title, bool value, Function onChangeMethod){
+  Padding builNotificationOption(
+      String title, bool value, Function onChangeMethod) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w500,
-            color: Colors.grey[600],
-          )),
+          Text(title,
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[600],
+              )),
           Transform.scale(
             scale: 0.7,
             child: CupertinoSwitch(
@@ -135,7 +144,6 @@ class _SettingUIState extends State<SettingUI> {
               onChanged: (bool newValue) {
                 onChangeMethod(newValue);
               },
-
             ),
           )
         ],
@@ -145,41 +153,42 @@ class _SettingUIState extends State<SettingUI> {
 
   GestureDetector bulidAccoutOption(BuildContext context, String title) {
     return GestureDetector(
-      onTap: () {
-        showDialog(context: context, builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(title),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text("Option 1"),
-                Text("Option 2"),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                }, 
-                child: Text("Close"))
+        onTap: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text(title),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text("Option 1"),
+                      Text("Option 2"),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text("Close"))
+                  ],
+                );
+              });
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(title,
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey[600])),
+              Icon(Icons.arrow_forward_ios, color: Colors.grey)
             ],
-          );
-        });
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(title, style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[600]
-            )),
-            Icon(Icons.arrow_forward_ios, color: Colors.grey)
-          ],
-        ),
-      )
-    );
+          ),
+        ));
   }
 }

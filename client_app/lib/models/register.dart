@@ -1,7 +1,8 @@
-class Register {
-  String name;
-  String email;
-  String password;
+class UserProfile {
+  String? name;
+  String? email;
+  String? password;
+  String? phone;
 
-  Register({required this.name, required this.email, required this.password});
+  UserProfile({ this.name,  this.email,  this.password,  this.phone});
 }
