@@ -152,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             formKey.currentState?.reset();
                                             Navigator.of(context).push(
                                               MaterialPageRoute(
-                                                builder:(context) => BottomNavigationBarExampleApp(),
+                                                builder:(context) => BottomNavigationBarAppRequester(),
                                               ),
                                             );
                                           });

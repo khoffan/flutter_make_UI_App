@@ -25,7 +25,7 @@ class _checkLoginState extends State<checkLogin> {
     else {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => BottomNavigationBarExampleApp(),
+          builder: (context) => BottomNavigationBarAppRequester(),
         )
       );
     }

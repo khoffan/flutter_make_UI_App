@@ -1,40 +1,36 @@
 import 'package:client_app/screen/chatpage.dart';
+import 'package:client_app/screen/homeResponder.dart';
 import 'package:flutter/material.dart';
 
-import '../screen/home.dart';
 import '../screen/serviceScreen.dart';
 import 'setting.dart';
 
 /// Flutter code sample for [BottomNavigationBar].
-class BottomNavigationBarAppRequester extends StatelessWidget {
-  const BottomNavigationBarAppRequester({
-    super.key,
-  });
+class BottomNavigationBarAppResponder extends StatelessWidget {
+
+  const BottomNavigationBarAppResponder({super.key,});
 
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: BottomNavigationBarScreen(),
+      home: BottomNavigationBar(),
     );
   }
 }
 
-class BottomNavigationBarScreen extends StatefulWidget {
-  const BottomNavigationBarScreen({super.key});
-
-  String? get receivedData => null;
+class BottomNavigationBar extends StatefulWidget {
+  const BottomNavigationBar({super.key});
 
   @override
-  State<BottomNavigationBarScreen> createState() =>
-      _BottomNavigationBarScreenState();
+  State<BottomNavigationBar> createState() => _BottomNavigationBarState();
 }
 
-class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
+class _BottomNavigationBarState extends State<BottomNavigationBar> {
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
-    Home(),
+    HomeResponder(),
     ChatPage(),
     Text(
       'Index 2: School',
@@ -44,9 +40,6 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   ];
 
   void _onItemTapped(int index) {
-    if (index == _selectedIndex) {
-      return;
-    }
     setState(() {
       _selectedIndex = index;
     });
@@ -62,7 +55,9 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
           child: Icon(Icons.add),
           onPressed: () {
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => ServiceScreen()),
+              MaterialPageRoute(builder: 
+                (context)=> ServiceScreen()
+              ),
             );
           },
         ),

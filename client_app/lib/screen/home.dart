@@ -8,13 +8,11 @@ import 'package:provider/provider.dart';
 class Home extends StatelessWidget {
   const Home({super.key});
   
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Home'),
+          title: Text('Home'),
           actions: [
             IconButton(
               icon: const Icon(Icons.add),
