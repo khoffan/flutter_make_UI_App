@@ -2,8 +2,6 @@ import 'package:client_app/providers/info_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'UI/btnavigate.dart';
-import 'providers/check_login.dart';
 import 'screen/loginscreen.dart';
 void main() {
   runApp(Myapp());

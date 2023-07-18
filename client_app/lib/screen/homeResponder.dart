@@ -9,7 +9,7 @@ class HomeResponder extends StatelessWidget {
       appBar: AppBar(
         title: Text('HomeResponder'),
       ),
-      body: Container(
+      body: Center(
         child: Text("Responder page"),
       ),
     );
