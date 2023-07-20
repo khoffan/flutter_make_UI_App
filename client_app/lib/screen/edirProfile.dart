@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:client_app/screen/profileScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,11 +29,13 @@ class _EditProfileState extends State<EditProfile> {
     });
   }
 
-  void saveFile() async {
-    String name = nameController.text;
-    String bio = bioController.text;
-
+  void saveFile(String name, String bio)  async {
     await AddProfile().saveProfile(name: name, bio: bio, file: _image!);
+    nameController.clear();
+    bioController.clear();
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => ProfileScreenApp())
+    );
   }
 
   @override
@@ -141,7 +144,11 @@ class _EditProfileState extends State<EditProfile> {
                           child: ElevatedButton(
                             onPressed: () {
                               if (_formKey.currentState?.validate() ?? false) {
-                                saveFile();
+                                _formKey.currentState?.save();
+                                String name = nameController.text;
+                                String bio = bioController.text;
+                                 saveFile(name, bio);
+                                _formKey.currentState?.reset();
                               }
                             },
                             child: Text("Save profile"),
