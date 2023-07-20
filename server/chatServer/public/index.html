@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+    <title>Chat page</title>
+</head>
+
+<body>
+    <header>
+        <h2>Chat view</h2>
+    </header>
+    <section>
+        <div id="viewtext">
+
+        </div>
+        <span class="textinput">
+            <input type="text" id="text-input" placeholder="type your mesaage" />
+            <button type="button" id="btn-submit">send</button>
+        </span>
+    </section>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on('message', message => {
+            const viewText = document.getElementById('viewtext');
+            const newBox = document.createElement('div');
+            newBox.textContent = message;
+            viewText.appendChild(newBox);
+        });
+
+        document.getElementById('btn-submit').addEventListener('click', () => {
+            const textInput = document.getElementById('text-input');
+            const msg = textInput.value.trim();
+            if (msg !== '') {
+                socket.emit('message', msg);
+                textInput.value = '';
+            }
+        });
+    </script>
+</body>
+
+</html>

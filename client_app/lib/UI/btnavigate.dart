@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../screen/home.dart';
 import '../screen/serviceScreen.dart';
+import '../screen/profileScreen.dart';
 import 'setting.dart';
 
 /// Flutter code sample for [BottomNavigationBar].
@@ -40,7 +41,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
       'Index 2: School',
       style: optionStyle,
     ),
-    SettingUI()
+    ProfileScreenApp(),
   ];
 
   void _onItemTapped(int index) {

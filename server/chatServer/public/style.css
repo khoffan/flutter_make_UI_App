@@ -1,0 +1,19 @@
+body {
+    padding: 20px;
+    margin: 20px;
+}
+
+
+#container {
+    padding: auto;
+    margin: auto;
+
+}
+
+#viewtext {
+    height: 100%;
+    width: 50%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 5px solid rgb(68, 98, 232);
+}

@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "D:/technical/flutter-project/Myapp/client_app/linux"
+    "cmake.sourceDirectory": "D:/technical/flutter-project/Myapp/client_app/linux",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
