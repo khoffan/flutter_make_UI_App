@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
 class ChatPage extends StatefulWidget {
   @override
@@ -6,74 +8,33 @@ class ChatPage extends StatefulWidget {
 }
 
 class ChatPageState extends State<ChatPage> {
-  List<String> messages = [];
+  List<types.Message> _messages = [];
+  final _user = const types.User(
+    id: '82091008-a484-4a89-ae75-a22bf8d6f3ac',
+  );
 
-  TextEditingController _textEditingController = TextEditingController();
-
-  void _sendMessage() {
+  void _addMessage(types.Message message) {
     setState(() {
-      messages.add(_textEditingController.text);
-      _textEditingController.clear();
+      _messages.insert(0, message);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Chat Page'),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                String message = messages[index];
-                int messageLength = message.length;
-                return FittedBox(
-                  fit: BoxFit.contain,
-                  child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.blueGrey,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Flexible(
-                      child: Text(
-                        message,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          Divider(),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.5),
-            margin: const EdgeInsets.only(bottom: 35),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _textEditingController,
-                    decoration: InputDecoration(
-                      hintText: 'Type a message...',
-                    ),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: _sendMessage,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+      appBar: AppBar(),
+      body: Chat(messages: _messages, onSendPressed: _handleSendPressed, user: _user,),
     );
+  }
+
+  void _handleSendPressed(types.PartialText message) {
+    final textMessage = types.TextMessage(
+      author: _user,
+      createdAt: DateTime.now().millisecondsSinceEpoch,
+      id: 'id',
+      text: message.text,
+    );
+
+    _addMessage(textMessage);
   }
 }

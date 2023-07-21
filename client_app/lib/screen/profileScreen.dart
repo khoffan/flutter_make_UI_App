@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../models/utils.dart';
 import 'edirProfile.dart';
+import 'loginscreen.dart';
 
 class ProfileScreenApp extends StatefulWidget {
   const ProfileScreenApp({super.key});
@@ -20,14 +22,12 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
   final Future<FirebaseApp> _firebase = Firebase.initializeApp();
   Uint8List? _image;
   void selectImage() async {
-    Uint8List img =  await pickerImage(ImageSource.gallery);
+    Uint8List img = await pickerImage(ImageSource.gallery);
     setState(() {
       _image = img;
     });
   }
-
-
-
+  final auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,17 +51,16 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
               Stack(
                 alignment: AlignmentDirectional.bottomCenter,
                 children: [
-                  _image != null ?
-                    CircleAvatar(
-                      radius: 64,
-                      backgroundImage: MemoryImage(_image!),
-                    )
-                    :
-                  CircleAvatar(
-                    radius: 64,
-                    backgroundImage: NetworkImage(
-                        'https://www.google.com/imgres?imgurl=https%3A%2F%2Fw7.pngwing.com%2Fpngs%2F205%2F731%2Fpng-transparent-default-avatar-thumbnail.png&tbnid=vj1POnmqwlZL-M&vet=12ahUKEwiv1vzRpZqAAxX-0qACHdgLBcgQMygCegUIARDlAQ..i&imgrefurl=https%3A%2F%2Fwww.pngwing.com%2Fen%2Fsearch%3Fq%3Ddefault&docid=J354HYBi_egj6M&w=360&h=360&q=default%20avatar%20in%20png&hl=en&ved=2ahUKEwiv1vzRpZqAAxX-0qACHdgLBcgQMygCegUIARDlAQ'),
-                  ),
+                  _image != null
+                      ? CircleAvatar(
+                          radius: 64,
+                          backgroundImage: MemoryImage(_image!),
+                        )
+                      : CircleAvatar(
+                          radius: 64,
+                          backgroundImage: NetworkImage(
+                              'https://www.google.com/imgres?imgurl=https%3A%2F%2Fw7.pngwing.com%2Fpngs%2F205%2F731%2Fpng-transparent-default-avatar-thumbnail.png&tbnid=vj1POnmqwlZL-M&vet=12ahUKEwiv1vzRpZqAAxX-0qACHdgLBcgQMygCegUIARDlAQ..i&imgrefurl=https%3A%2F%2Fwww.pngwing.com%2Fen%2Fsearch%3Fq%3Ddefault&docid=J354HYBi_egj6M&w=360&h=360&q=default%20avatar%20in%20png&hl=en&ved=2ahUKEwiv1vzRpZqAAxX-0qACHdgLBcgQMygCegUIARDlAQ'),
+                        ),
                   Positioned(
                     child: IconButton(
                       onPressed: () {
@@ -83,20 +82,22 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
               Center(
                 child: Column(children: [Text("Name"), Text("company")]),
               ),
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
               Center(
-                    child: SizedBox(
-                      width: 200,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => EditProfile()),
-                          );
-                        }, 
-                        child: Text("Edit profile"),
-                      ),
-                    ),
+                child: SizedBox(
+                  width: 200,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => EditProfile()),
+                      );
+                    },
+                    child: Text("Edit profile"),
                   ),
+                ),
+              ),
             ],
           ),
         ),
@@ -128,14 +129,19 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
                     child: Center(
                       child: ElevatedButton(
                         onPressed: () {
-                          // Add authen logout hare
+                          auth.signOut().then((value) {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LoginScreen()),
+                            );
+                          });
                         },
                         child: Text("Sign Out"),
                       ),
                     ),
                   ),
                 ],
-                
               ),
             ),
           ),

@@ -1,3 +1,5 @@
+import 'package:client_app/providers/add_users.dart';
+import 'package:client_app/screen/loginscreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,10 +8,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 // import 'package:http/http.dart' as http;
 import 'dart:async';
-// import 'dart:convert';
+import 'dart:convert';
 // import 'dart:io';
 
 import '../models/register.dart';
+import '../providers/add_users.dart';
 import '../providers/user_provider.dart';
 // import 'loginscreen.dart';
 
@@ -29,6 +32,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController passController = TextEditingController();
   TextEditingController curpassController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
+
+  Future<void> _saveRegisterData() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passController.text,
+        );
+
+        // Save user data to Firestore
+        String result = await AddUsers().saveUsers(
+          name: nameController.text.trim(),
+          email: emailController.text.trim(),
+          password: passController.text,
+          phone: phoneController.text.trim(),
+        );
+        nameController.clear();
+        emailController.clear();
+        passController.clear();
+        phoneController.clear();
+        curpassController.clear();
+        print("User registration successful");
+        print("Firestore result: $result");
+        Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+        // Optionally, you can navigate to the home screen or perform other actions after successful registration.
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'weak-password') {
+          print('The password provided is too weak.');
+        } else if (e.code == 'email-already-in-use') {
+          print('The account already exists for that email.');
+        } else {
+          print('An error occurred while registering: ${e.message}');
+        }
+      } catch (e) {
+        print('An error occurred while registering: $e');
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -218,33 +259,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               height: 40,
                               width: 200,
                               child: ElevatedButton(
-                                onPressed: () async {
-                                  if (_formKey.currentState?.validate() ??
-                                      false) {
-                                    _formKey.currentState?.save();
-                                    await Users.setLogin(true);
-                                    try {
-                                      await FirebaseAuth.instance
-                                          .createUserWithEmailAndPassword(
-                                              email: register.email.toString(),
-                                              password:
-                                                  register.password.toString())
-                                          .then((value) {
-                                        Fluttertoast.showToast(
-                                          msg: "Sing-Up complete!",
-                                          gravity: ToastGravity.CENTER,
-                                        );
-                                        _formKey.currentState?.reset();
-                                        Navigator.of(context).pop();
-                                      });
-                                    } on FirebaseAuthException catch (e) {
-                                      Fluttertoast.showToast(
-                                        msg: e.message.toString(),
-                                        gravity: ToastGravity.CENTER,
-                                      );
-                                    }
-                                  }
-                                },
+                                onPressed: _saveRegisterData,
+                                // onPressed: () async {
+                                //   if (_formKey.currentState?.validate() ??
+                                //       false) {
+                                //     _formKey.currentState?.save();
+                                //     String name = nameController.text;
+                                //     String email = emailController.text;
+                                //     String password = passController.text;
+                                //     String phone = phoneController.text;
+                                //     await Users.setLogin(true);
+                                //     try {
+                                //       await FirebaseAuth.instance
+                                //           .createUserWithEmailAndPassword(
+                                //               email: register.email.toString(),
+                                //               password:
+                                //                   register.password.toString())
+                                //           .then((value) {
+                                //         Fluttertoast.showToast(
+                                //           msg: "Sing-Up complete!",
+                                //           gravity: ToastGravity.CENTER,
+                                //         );
+                                //         saveUsersSingup(name, email, password, phone);
+                                //         _formKey.currentState?.reset();
+                                //         Navigator.of(context).pop();
+                                //       });
+                                //     } on FirebaseAuthException catch (e) {
+                                //       Fluttertoast.showToast(
+                                //         msg: e.message.toString(),
+                                //         gravity: ToastGravity.CENTER,
+                                //       );
+                                //     }
+                                //   }
+                                // },
                                 child: Text("Sign-Up"),
                               ),
                             )
