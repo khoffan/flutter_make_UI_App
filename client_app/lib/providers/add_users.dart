@@ -13,19 +13,21 @@ class AddUsers {
       {required String name,
       required String phone,
       required String email,
-      required String password}) async {
+      required String password, required String uid,
+       }) async {
     String resp = "some Error";
     try {
       print("Attempting to save data...");
       if (name.isNotEmpty && email.isNotEmpty && password.isNotEmpty && phone.isNotEmpty) {
 
         String hashPw = BCrypt.hashpw(password, BCrypt.gensalt());
-        await _firestore.collection("Users").add({
+        await _firestore.collection("Users").doc(uid).set({
+          'uid': uid,
           'name': name,
           'email': email,
           'phone': phone,
           'password':hashPw
-        });
+        }, SetOptions(merge: true));
         print("Data saved successfully!");
         resp = "Success";
       } else {

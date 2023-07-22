@@ -1,4 +1,5 @@
 import 'package:client_app/providers/add_users.dart';
+import 'package:client_app/providers/auth_user.dart';
 import 'package:client_app/screen/loginscreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -36,17 +37,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> _saveRegisterData() async {
     if (_formKey.currentState!.validate()) {
       try {
-        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passController.text,
-        );
-
-        // Save user data to Firestore
-        String result = await AddUsers().saveUsers(
-          name: nameController.text.trim(),
-          email: emailController.text.trim(),
-          password: passController.text,
-          phone: phoneController.text.trim(),
+        await AuthUsers().signUpWithEmailpass(
+          emailController.text,
+          passController.text,
+          nameController.text,
+          phoneController.text,
         );
         nameController.clear();
         emailController.clear();
@@ -54,8 +49,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         phoneController.clear();
         curpassController.clear();
         print("User registration successful");
-        print("Firestore result: $result");
-        Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => LoginScreen()));
         // Optionally, you can navigate to the home screen or perform other actions after successful registration.
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {

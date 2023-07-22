@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:async';
 
+import 'package:client_app/providers/auth_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -128,14 +129,9 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
                     margin: const EdgeInsets.all(10),
                     child: Center(
                       child: ElevatedButton(
-                        onPressed: () {
-                          auth.signOut().then((value) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => LoginScreen()),
-                            );
-                          });
+                        onPressed: () async {
+                          await AuthUsers().signOut(context);
+                          
                         },
                         child: Text("Sign Out"),
                       ),

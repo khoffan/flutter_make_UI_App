@@ -1,4 +1,5 @@
 import 'package:client_app/screen/chatpage.dart';
+import 'package:client_app/screen/homeResponder.dart';
 import 'package:flutter/material.dart';
 
 import '../screen/home.dart';
@@ -36,7 +37,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
       TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
     Home(),
-    ChatPage(),
+    HomeResponder(),
     Text(
       'Index 2: School',
       style: optionStyle,

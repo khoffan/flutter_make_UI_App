@@ -31,7 +31,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBar> {
       TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
     HomeResponder(),
-    ChatPage(),
+
     Text(
       'Index 2: School',
       style: optionStyle,

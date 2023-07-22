@@ -1,8 +1,14 @@
+import 'package:client_app/screen/chatpage.dart';
+import 'package:client_app/screen/home.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../UI/btnavigate.dart';
 import '../UI/btnavigater_responder.dart';
 import '../UI/dropdown.dart';
+import 'homeResponder.dart';
+import 'showUser.dart';
 
 class ServiceScreen extends StatefulWidget {
   const ServiceScreen({super.key});
@@ -12,7 +18,7 @@ class ServiceScreen extends StatefulWidget {
 }
 
 class _ServiceScreenState extends State<ServiceScreen> {
-  int? count;
+  int? _count;
   bool isDefaultColor = true; // Track the current state
   Color? containerColor = Colors.transparent;
   Color? containerTextColor = const Color.fromARGB(0, 0, 0, 0);
@@ -20,6 +26,8 @@ class _ServiceScreenState extends State<ServiceScreen> {
   bool isDefaultColor1 = true; // Track the current state
   Color? containerColor1 = Colors.transparent;
   Color? containerTextColor1 = const Color.fromARGB(0, 0, 0, 0);
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,14 +43,16 @@ class _ServiceScreenState extends State<ServiceScreen> {
               GestureDetector(
                 onTap: () {
                   setState(() {
-                    count = 0;
+                    _count = 0;
                     isDefaultColor =
                         !isDefaultColor; // Toggle the current state
-                    containerColor =
-                        isDefaultColor ? Colors.transparent : const Color.fromARGB(255, 214, 214, 214);
-                    containerTextColor =  isDefaultColor ? Colors.transparent : Colors.white;
-                    
-                    print(count);
+                    containerColor = isDefaultColor
+                        ? Colors.transparent
+                        : const Color.fromARGB(255, 214, 214, 214);
+                    containerTextColor =
+                        isDefaultColor ? Colors.transparent : Colors.white;
+
+                    print(_count);
                   });
                 },
                 child: Container(
@@ -57,7 +67,9 @@ class _ServiceScreenState extends State<ServiceScreen> {
                     children: [
                       Text(
                         "ผู้รับฝาก",
-                        style: TextStyle(fontSize: 15, color: containerTextColor = Colors.blue),
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: containerTextColor = Colors.blue),
                       ),
                       IconButton(
                         onPressed: () {},
@@ -74,13 +86,15 @@ class _ServiceScreenState extends State<ServiceScreen> {
               GestureDetector(
                 onTap: () {
                   setState(() {
-                    count = 1;
+                    _count = 1;
                     isDefaultColor1 =
                         !isDefaultColor1; // Toggle the current state
-                    containerColor1 =
-                        isDefaultColor1 ? Colors.transparent : const Color.fromARGB(255, 214, 214, 214);
-                    containerTextColor1 = isDefaultColor1 ? Colors.transparent : Colors.white;
-                    print(count);
+                    containerColor1 = isDefaultColor1
+                        ? Colors.transparent
+                        : const Color.fromARGB(255, 214, 214, 214);
+                    containerTextColor1 =
+                        isDefaultColor1 ? Colors.transparent : Colors.white;
+                    print(_count);
                   });
                 },
                 child: Container(
@@ -95,7 +109,9 @@ class _ServiceScreenState extends State<ServiceScreen> {
                     children: [
                       Text(
                         "ผู้ฝาก",
-                        style: TextStyle(fontSize: 15, color: Color.fromARGB(255, 0, 57, 245)),
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Color.fromARGB(255, 0, 57, 245)),
                       ),
                       IconButton(
                         onPressed: () {},
@@ -119,6 +135,20 @@ class _ServiceScreenState extends State<ServiceScreen> {
                     ),
                     DropdoenWidget(),
                   ],
+                ),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => Myhome())
+                    );
+                  },
+                  child: Text("Matching"),
                 ),
               ),
             ],

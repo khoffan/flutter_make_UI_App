@@ -5,10 +5,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 // import 'package:http/http.dart' as http;
 import '../UI/btnavigate.dart';
 // import '../providers/user_provider.dart';
 import '../models/register.dart';
+import '../providers/auth_user.dart';
 import '../providers/user_provider.dart';
 import 'registerScreen.dart';
 
@@ -145,17 +147,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                         formKey.currentState?.save();
                                         await Users.setLogin(true);
                                         try {
-                                          await FirebaseAuth.instance.signInWithEmailAndPassword(
-                                            email: login.email.toString(), 
-                                            password: login.password.toString(), 
-                                          ).then((value) {
-                                            formKey.currentState?.reset();
-                                            Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                builder:(context) => BottomNavigationBarAppRequester(),
-                                              ),
-                                            );
-                                          });
+                                          await AuthUsers().signInwithEmailpassword(
+                                            emailController.text,
+                                            passwordController.text
+                                          ).then((value) => Navigator.push(context, MaterialPageRoute(builder: (_) => BottomNavigationBarAppRequester())));
                                         } on FirebaseAuthException catch (e) {
                                           Fluttertoast.showToast(
                                             msg: e.message.toString(),
