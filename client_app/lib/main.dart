@@ -1,3 +1,4 @@
+import 'package:client_app/providers/check_login.dart';
 import 'package:client_app/providers/info_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,7 @@ class Myapp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: LoginScreen()
+        home: checkLogin()
       ),
     );
   }

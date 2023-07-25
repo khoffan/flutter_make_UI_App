@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../UI/btnavigate.dart';
 import 'chatpage.dart';
 
 class Myhome extends StatefulWidget {
@@ -18,7 +19,14 @@ class _MyhomeState extends State<Myhome> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Userlist"),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
+      
       body: builderUser(),
     );
   }

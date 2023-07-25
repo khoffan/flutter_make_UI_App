@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:async';
 
 import 'package:client_app/providers/auth_user.dart';
+import 'package:client_app/providers/user_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,7 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 74, 183, 0),
+        backgroundColor: Colors.blue,
         actions: [
           IconButton(
             onPressed: () {
@@ -44,6 +45,8 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
         ],
       ),
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         child: Padding(
           padding: const EdgeInsets.only(top: 20),
           child: Column(
@@ -59,8 +62,7 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
                         )
                       : CircleAvatar(
                           radius: 64,
-                          backgroundImage: NetworkImage(
-                              'https://www.google.com/imgres?imgurl=https%3A%2F%2Fw7.pngwing.com%2Fpngs%2F205%2F731%2Fpng-transparent-default-avatar-thumbnail.png&tbnid=vj1POnmqwlZL-M&vet=12ahUKEwiv1vzRpZqAAxX-0qACHdgLBcgQMygCegUIARDlAQ..i&imgrefurl=https%3A%2F%2Fwww.pngwing.com%2Fen%2Fsearch%3Fq%3Ddefault&docid=J354HYBi_egj6M&w=360&h=360&q=default%20avatar%20in%20png&hl=en&ved=2ahUKEwiv1vzRpZqAAxX-0qACHdgLBcgQMygCegUIARDlAQ'),
+                          backgroundImage: AssetImage('assets/personal.png')
                         ),
                   Positioned(
                     child: IconButton(
@@ -90,10 +92,11 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
                 child: SizedBox(
                   width: 200,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       Navigator.of(context).push(
                         MaterialPageRoute(builder: (context) => EditProfile()),
                       );
+                      
                     },
                     child: Text("Edit profile"),
                   ),
@@ -130,7 +133,10 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
                     child: Center(
                       child: ElevatedButton(
                         onPressed: () async {
+                          await Users.setLogin(false);
                           await AuthUsers().signOut(context);
+                          
+                          
                           
                         },
                         child: Text("Sign Out"),

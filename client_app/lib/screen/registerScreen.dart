@@ -1,4 +1,4 @@
-import 'package:client_app/providers/add_users.dart';
+import 'package:client_app/models/add_users.dart';
 import 'package:client_app/providers/auth_user.dart';
 import 'package:client_app/screen/loginscreen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -13,7 +13,7 @@ import 'dart:convert';
 // import 'dart:io';
 
 import '../models/register.dart';
-import '../providers/add_users.dart';
+import '../models/add_users.dart';
 import '../providers/user_provider.dart';
 // import 'loginscreen.dart';
 
@@ -27,6 +27,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   UserProfile register = UserProfile();
+  bool? status = false;
   final Future<FirebaseApp> firebase = Firebase.initializeApp();
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -42,6 +43,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           passController.text,
           nameController.text,
           phoneController.text,
+          status
         );
         nameController.clear();
         emailController.clear();
