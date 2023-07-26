@@ -39,14 +39,14 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
               bool? status = data['status'];
               if (status == true) {
-                SchedulerBinding.instance!.addPostFrameCallback((_) {
+                SchedulerBinding.instance.addPostFrameCallback((_) {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (_) => Myhome()),
                   );
                 });
                 print(status);
               } else if (status == false) {
-                SchedulerBinding.instance!.addPostFrameCallback((_) {
+                SchedulerBinding.instance.addPostFrameCallback((_) {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
                       builder: (_) => HomeResponder(),

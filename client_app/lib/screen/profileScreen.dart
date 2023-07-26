@@ -1,9 +1,10 @@
-import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:async';
 
 import 'package:client_app/providers/auth_user.dart';
 import 'package:client_app/providers/user_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,6 @@ import 'package:image_picker/image_picker.dart';
 
 import '../models/utils.dart';
 import 'edirProfile.dart';
-import 'loginscreen.dart';
 
 class ProfileScreenApp extends StatefulWidget {
   const ProfileScreenApp({super.key});
@@ -22,90 +22,116 @@ class ProfileScreenApp extends StatefulWidget {
 
 class _ProfileScreenAppState extends State<ProfileScreenApp> {
   final Future<FirebaseApp> _firebase = Firebase.initializeApp();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   Uint8List? _image;
-  void selectImage() async {
-    Uint8List img = await pickerImage(ImageSource.gallery);
-    setState(() {
-      _image = img;
-    });
-  }
-  final auth = FirebaseAuth.instance;
+  // void selectImage() async {
+  //   Uint8List img = await pickerImage(ImageSource.gallery);
+  //   setState(() {
+  //     _image = img;
+  //   });
+  // }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        actions: [
-          IconButton(
-            onPressed: () {
-              showMediabottom(context);
-            },
-            icon: Icon(Icons.dehaze),
-          )
-        ],
-      ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Stack(
-                alignment: AlignmentDirectional.bottomCenter,
-                children: [
-                  _image != null
-                      ? CircleAvatar(
-                          radius: 64,
-                          backgroundImage: MemoryImage(_image!),
-                        )
-                      : CircleAvatar(
-                          radius: 64,
-                          backgroundImage: AssetImage('assets/personal.png')
-                        ),
-                  Positioned(
-                    child: IconButton(
-                      onPressed: () {
-                        selectImage();
-                      },
-                      icon: Icon(
-                        Icons.add_a_photo,
-                        size: 28,
+    return FutureBuilder(
+      future: _firebase,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+            child: Text("Error: ${snapshot.error}"),
+          );
+        } else if (snapshot.connectionState == ConnectionState.done) {
+          return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+            stream: FirebaseFirestore.instance
+                .collection("userProfile")
+                .doc(_auth.currentUser!.uid)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text("Error: ${snapshot.error}"),
+                );
+              } else if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: Text("Loading....."),
+                );
+              } else if (snapshot.hasData) {
+                var data = snapshot.data?.data();
+                String name = data?["name"] ?? '';
+                String bio = data?["bio"] ?? '';
+                String image = data?["imageLink"] ?? '';
+                print(name + bio);
+                return Scaffold(
+                  appBar: AppBar(
+                    backgroundColor: Colors.blue,
+                    actions: [
+                      IconButton(
+                        onPressed: () {
+                          showMediabottom(context);
+                        },
+                        icon: Icon(Icons.dehaze),
+                      )
+                    ],
+                  ),
+                  body: Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Stack(
+                            alignment: AlignmentDirectional.bottomCenter,
+                            children: [
+                              CircleAvatar(
+                                radius: 64,
+                                backgroundImage: NetworkImage(
+                                    image),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Center(
+                            child: Column(
+                              children: [
+                                Text(name.toString()),
+                                Text(bio.toString()),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Center(
+                            child: SizedBox(
+                              width: 200,
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) => EditProfile()),
+                                  );
+                                },
+                                child: Text("Edit profile"),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    bottom: -10,
-                    left: 80,
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Center(
-                child: Column(children: [Text("Name"), Text("company")]),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Center(
-                child: SizedBox(
-                  width: 200,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => EditProfile()),
-                      );
-                      
-                    },
-                    child: Text("Edit profile"),
                   ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+                );
+              }
+              return Container();
+            },
+          );
+        }
+        return Container();
+      },
     );
   }
 
@@ -135,9 +161,6 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
                         onPressed: () async {
                           await Users.setLogin(false);
                           await AuthUsers().signOut(context);
-                          
-                          
-                          
                         },
                         child: Text("Sign Out"),
                       ),

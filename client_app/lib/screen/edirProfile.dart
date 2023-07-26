@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:client_app/screen/profileScreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -29,13 +30,12 @@ class _EditProfileState extends State<EditProfile> {
     });
   }
 
-  void saveFile(String name, String bio)  async {
+  void saveFile(String name, String bio) async {
     await AddProfile().saveProfile(name: name, bio: bio, file: _image!);
     nameController.clear();
     bioController.clear();
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => ProfileScreenApp())
-    );
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => ProfileScreenApp()));
   }
 
   @override
@@ -59,6 +59,7 @@ class _EditProfileState extends State<EditProfile> {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 20),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Stack(
                         alignment: AlignmentDirectional.bottomCenter,
@@ -94,45 +95,8 @@ class _EditProfileState extends State<EditProfile> {
                       Container(
                         padding: const EdgeInsets.all(15),
                         child: Column(children: [
-                          Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10)),
-                            child: TextFormField(
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  hintText: "name"),
-                              controller: nameController,
-                              validator: (val) {
-                                if (val == null || val.isEmpty) {
-                                  return "please enter your name";
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10)),
-                            child: TextFormField(
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  hintText: "bio"),
-                              controller: bioController,
-                              validator: (val) {
-                                if (val == null || val.isEmpty) {
-                                  return "Please add a bio";
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
+                          buildFeildInput(context,"dorm"),
+                          buildFeildInput(context,"student-id"),
                         ]),
                       ),
                       SizedBox(
@@ -147,7 +111,9 @@ class _EditProfileState extends State<EditProfile> {
                                 _formKey.currentState?.save();
                                 String name = nameController.text;
                                 String bio = bioController.text;
-                                 saveFile(name, bio);
+
+                                saveFile(name, bio);
+
                                 _formKey.currentState?.reset();
                               }
                             },
@@ -168,6 +134,58 @@ class _EditProfileState extends State<EditProfile> {
           ),
         );
       },
+    );
+  }
+
+  GestureDetector buildFeildInput(context, String title) {
+    if (title == "dorm") {
+      return GestureDetector(
+        child: Container(
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+          child: TextFormField(
+            decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                hintText: title),
+            controller: nameController,
+            validator: (val) {
+              if (val == null || val.isEmpty) {
+                return "please enter your name";
+              }
+              return null;
+            },
+          ),
+        ),
+      );
+    }
+    else if(title == "student-id"){
+      return GestureDetector(
+        child: Container(
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+          child: TextFormField(
+            decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                hintText: title),
+            controller: bioController,
+            validator: (val) {
+              if (val == null || val.isEmpty) {
+                return "please enter your name";
+              }
+              return null;
+            },
+          ),
+        ),
+      );
+    }
+    return GestureDetector(
+      child: Container(
+        child: Center(
+          child: Text("Error show widget"),
+        ),
+      ),
     );
   }
 }
