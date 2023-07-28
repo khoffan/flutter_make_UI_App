@@ -37,7 +37,7 @@ class _MyhomeState extends State<Myhome> {
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Center(
-            child: Text("error"),
+            child: Text("error ${snapshot.error}"),
           );
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -54,7 +54,7 @@ class _MyhomeState extends State<Myhome> {
 
   Widget _builderItemUser(DocumentSnapshot document) {
     Map<String, dynamic>? data = document.data() as Map<String, dynamic>;
-    if (data != null && _auth.currentUser?.email != data['email']) {
+    if (data != '' && _auth.currentUser?.email != data['email']) {
       return ListTile(
         title: Text(data['email'] ?? ''), // Use ?? to provide a default value if null
         onTap: () {

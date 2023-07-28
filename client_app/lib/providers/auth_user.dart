@@ -18,7 +18,7 @@ class AuthUsers {
       );
 
       await UsersFirestore().saveUsers(
-        uid: userCredential.user!.uid,
+        uid: userCredential.user?.uid ?? '',
         name: name,
         email: email,
         password: password,

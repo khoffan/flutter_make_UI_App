@@ -24,18 +24,20 @@ class _LoadingScreenState extends State<LoadingScreen> {
               .doc(widget.uid)
               .get(),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (snapshot.hasError) {
+            if (snapshot.hasError) {
               Center(
                 child: Text("Error: ${snapshot.error}"),
               );
-            } else if (snapshot.hasData) {
-              DocumentSnapshot document = snapshot.data!;
+            }
+            else if (snapshot.connectionState == ConnectionState.waiting) {
+              Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            else if (snapshot.hasData) {
+              DocumentSnapshot? document = snapshot.data;
               Map<String, dynamic>? data =
-                  document.data() as Map<String, dynamic>;
+                  document?.data() as Map<String, dynamic>;
 
               bool? status = data['status'];
               if (status == true) {

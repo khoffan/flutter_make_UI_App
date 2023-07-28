@@ -33,7 +33,7 @@ class AddProfile {
       if (name.isNotEmpty && bio.isNotEmpty) {
         String imageURL = await uploadImagetoStorage('profileImage', file);
 
-        await _firestore.collection("userProfile").doc(_auth.currentUser!.uid).set({
+        await _firestore.collection("userProfile").doc(_auth.currentUser?.uid ?? '').set({
           'name': name,
           'bio': bio,
           'imageLink': imageURL,

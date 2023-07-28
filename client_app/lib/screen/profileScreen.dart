@@ -6,9 +6,7 @@ import 'package:client_app/providers/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../models/utils.dart';
 import 'edirProfile.dart';
@@ -42,10 +40,28 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
             child: Text("Error: ${snapshot.error}"),
           );
         } else if (snapshot.connectionState == ConnectionState.done) {
+          final User? currentUser = _auth.currentUser;
+          if (currentUser == null) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Null user in db"),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await Users.setLogin(false);
+                      await AuthUsers().signOut(context);
+                    },
+                    child: Text("Sign Out"),
+                  ),
+                ],
+              ),
+            );
+          }
           return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
             stream: FirebaseFirestore.instance
                 .collection("userProfile")
-                .doc(_auth.currentUser!.uid)
+                .doc(currentUser.uid)
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
@@ -87,8 +103,7 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
                             children: [
                               CircleAvatar(
                                 radius: 64,
-                                backgroundImage: NetworkImage(
-                                    image),
+                                backgroundImage: NetworkImage(image),
                               ),
                             ],
                           ),

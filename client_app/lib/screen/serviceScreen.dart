@@ -28,7 +28,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
   bool isDefaultColor1 = true; // Track the current state
   Color? containerColor1 = Colors.transparent;
   Color? containerTextColor1 = const Color.fromARGB(0, 0, 0, 0);
-  String uid = FirebaseAuth.instance.currentUser!.uid;
+  String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -142,14 +142,14 @@ class _ServiceScreenState extends State<ServiceScreen> {
               Center(
                 child: ElevatedButton(
                   onPressed: () {
-                    if (_count == 0 && uid != '') {
+                    if (_count == 0 && uid != null) {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (_) => LoadingScreen(uid: uid ),
                         ),
                       );
                       AuthUsers().updateStatus(false,uid);
-                    } else if(_count == 1 && uid != '') {
+                    } else if(_count == 1 && uid != null) {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (_) => LoadingScreen(uid: uid ),

@@ -44,146 +44,163 @@ class _LoginScreenState extends State<LoginScreen> {
             return Scaffold(
               backgroundColor: Color.fromARGB(255, 255, 255, 255),
               body: Container(
-                height: double.infinity,
+                height: MediaQuery.of(context)
+                    .size
+                    .height + 100, // Use MediaQuery to get the screen height
                 width: double.infinity,
                 alignment: Alignment.center,
                 child: Form(
                   key: formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: ListView(
+                    shrinkWrap: true,
                     children: [
-                      Text(
-                        "Login",
-                        style: TextStyle(fontSize: 25),
-                      ),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Email",
-                              style: TextStyle(fontSize: 15),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20)),
-                              child: TextFormField(
-                                  //make felid input text
-                                  keyboardType: TextInputType.emailAddress,
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20)),
-                                    contentPadding: EdgeInsets.all(15),
-                                    fillColor: Colors.black,
-                                    hintText: "Email",
-                                    hintStyle: TextStyle(fontSize: 12),
-                                  ),
-                                  onSaved: (val) =>
-                                      login.email = val.toString(),
-                                  controller: emailController,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter your Email';
-                                    }
-                                    return null;
-                                  }),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Text(
-                              "Password",
-                              style: TextStyle(fontSize: 15),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20)),
-                              child: TextFormField(
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(20)),
-                                  contentPadding: EdgeInsets.all(15),
-                                  fillColor: Colors.black,
-                                  hintText: "Password",
-                                  hintStyle: TextStyle(fontSize: 12),
-                                ),
-                                onSaved: (val) {
-                                  login.password = val.toString();
-                                },
-                                controller: passwordController,
-                                validator: (val) {
-                                  if (val == null || val.isEmpty) {
-                                    return 'Please enter your Password';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                            SizedBox(
-                              height: 50,
-                            ),
-                            Center(
-                              child: Container(
-                                child: SizedBox(
-                                  width: 200,
-                                  child: ElevatedButton(
-                                    onPressed: () async {
-                                      if (formKey.currentState?.validate() ??
-                                          false) {
-                                        formKey.currentState?.save();
-                                        await Users.setLogin(true);
-                                        try {
-                                          await AuthUsers().signInwithEmailpassword(
-                                            emailController.text,
-                                            passwordController.text
-                                          ).then((value) => Navigator.push(context, MaterialPageRoute(builder: (_) => BottomNavigationBarAppRequester())));
-                                        } on FirebaseAuthException catch (e) {
-                                          Fluttertoast.showToast(
-                                            msg: e.message.toString(),
-                                            gravity: ToastGravity.CENTER,
-                                          );
-                                        }
-                                      }
-                                    },
-                                    child: Text("Login"),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                      Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("if you don't have account? "),
-                          TextButton(
-                            child: Text(
-                              "sign-up",
-                              style: TextStyle(color: Colors.red),
+                          Container(
+                            child: Image.asset('assets/pa/logo.png'),
+                          ),
+                          Text(
+                            "Login",
+                            style: TextStyle(fontSize: 25),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Email",
+                                  style: TextStyle(fontSize: 15),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(20)),
+                                  child: TextFormField(
+                                      //make felid input text
+                                      keyboardType: TextInputType.emailAddress,
+                                      decoration: InputDecoration(
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20)),
+                                        contentPadding: EdgeInsets.all(15),
+                                        fillColor: Colors.black,
+                                        hintText: "Email",
+                                        hintStyle: TextStyle(fontSize: 12),
+                                      ),
+                                      onSaved: (val) =>
+                                          login.email = val.toString(),
+                                      controller: emailController,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter your Email';
+                                        }
+                                        return null;
+                                      }),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Text(
+                                  "Password",
+                                  style: TextStyle(fontSize: 15),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(20)),
+                                  child: TextFormField(
+                                    obscureText: true,
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      contentPadding: EdgeInsets.all(15),
+                                      fillColor: Colors.black,
+                                      hintText: "Password",
+                                      hintStyle: TextStyle(fontSize: 12),
+                                    ),
+                                    onSaved: (val) {
+                                      login.password = val.toString();
+                                    },
+                                    controller: passwordController,
+                                    validator: (val) {
+                                      if (val == null || val.isEmpty) {
+                                        return 'Please enter your Password';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 50,
+                                ),
+                                Center(
+                                  child: Container(
+                                    child: SizedBox(
+                                      width: 200,
+                                      child: ElevatedButton(
+                                        onPressed: () async {
+                                          if (formKey.currentState
+                                                  ?.validate() ??
+                                              false) {
+                                            formKey.currentState?.save();
+                                            await Users.setLogin(true);
+                                            try {
+                                              await AuthUsers()
+                                                  .signInwithEmailpassword(
+                                                      emailController.text,
+                                                      passwordController.text)
+                                                  .then((value) => Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (_) =>
+                                                              BottomNavigationBarAppRequester())));
+                                            } on FirebaseAuthException catch (e) {
+                                              Fluttertoast.showToast(
+                                                msg: e.message.toString(),
+                                                gravity: ToastGravity.CENTER,
+                                              );
+                                            }
+                                          }
+                                        },
+                                        child: Text("Login"),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                            style: TextButton.styleFrom(
-                              textStyle: TextStyle(color: Colors.red),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => RegisterScreen()));
-                            },
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("if you don't have account? "),
+                              TextButton(
+                                child: Text(
+                                  "sign-up",
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                                style: TextButton.styleFrom(
+                                  textStyle: TextStyle(color: Colors.red),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => RegisterScreen()));
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       ),

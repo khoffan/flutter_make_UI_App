@@ -31,11 +31,15 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   void saveFile(String name, String bio) async {
+    if(_image == null){
+      return;
+    }
+
     await AddProfile().saveProfile(name: name, bio: bio, file: _image!);
     nameController.clear();
     bioController.clear();
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => ProfileScreenApp()));
+        .pop();
   }
 
   @override
@@ -56,10 +60,12 @@ class _EditProfileState extends State<EditProfile> {
               height: double.infinity,
               child: Form(
                 key: _formKey,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 20),
-                  child: Column(
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Stack(
                         alignment: AlignmentDirectional.bottomCenter,
@@ -123,6 +129,7 @@ class _EditProfileState extends State<EditProfile> {
                       ),
                     ],
                   ),
+                  ],
                 ),
               ),
             ),

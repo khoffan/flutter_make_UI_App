@@ -9,11 +9,12 @@ class InfoProvider extends ChangeNotifier {
 
   //get data
   List<Infomations> getInfomations(){
-    return infomations;
+    return infomations ?? [];
   }
 
   //add data
   void addInfomation(Infomations data){
+    infomations ?? [];
     infomations.insert(0, data);
 
     notifyListeners();

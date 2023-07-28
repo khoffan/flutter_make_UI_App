@@ -3,6 +3,7 @@ import 'package:client_app/screen/homeResponder.dart';
 import 'package:flutter/material.dart';
 
 import '../screen/home.dart';
+import '../screen/qrCodeScanner.dart';
 import '../screen/serviceScreen.dart';
 import '../screen/profileScreen.dart';
 import 'setting.dart';
@@ -38,10 +39,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   static List<Widget> _widgetOptions = <Widget>[
     Home(),
     HomeResponder(),
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
+    QrcodeScanner(),
     ProfileScreenApp(),
   ];
 
@@ -135,7 +133,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.school,
+                            Icon(Icons.camera_alt,
                                 color: _selectedIndex == 2
                                     ? Colors.green
                                     : Colors.grey),
