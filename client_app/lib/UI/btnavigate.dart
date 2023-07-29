@@ -39,7 +39,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   static List<Widget> _widgetOptions = <Widget>[
     Home(),
     HomeResponder(),
-    QrcodeScanner(),
+    QrscannerScreen(),
     ProfileScreenApp(),
   ];
 
@@ -133,7 +133,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.camera_alt,
+                            Icon(Icons.qr_code_scanner,
                                 color: _selectedIndex == 2
                                     ? Colors.green
                                     : Colors.grey),
