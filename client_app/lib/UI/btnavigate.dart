@@ -38,7 +38,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
-    AddContent(),
+    HomePage(),
     HomeResponder(),
     QrscannerScreen(),
     ProfileScreenApp(),
