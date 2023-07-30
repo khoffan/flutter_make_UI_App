@@ -6,6 +6,7 @@ import '../screen/home.dart';
 import '../screen/qrCodeScanner.dart';
 import '../screen/serviceScreen.dart';
 import '../screen/profileScreen.dart';
+import 'add_content.dart';
 import 'setting.dart';
 
 /// Flutter code sample for [BottomNavigationBar].
@@ -37,7 +38,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
-    Home(),
+    AddContent(),
     HomeResponder(),
     QrscannerScreen(),
     ProfileScreenApp(),
