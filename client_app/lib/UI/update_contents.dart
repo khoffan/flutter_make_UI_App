@@ -6,14 +6,14 @@ import 'package:intl/intl.dart';
 
 import '../screen/home.dart';
 
-class AddContent extends StatefulWidget {
-  const AddContent({super.key});
-
+class UpdateContent extends StatefulWidget {
+  const UpdateContent({super.key, required this.datas});
+  final Map datas;
   @override
-  State<AddContent> createState() => _AddContentState();
+  State<UpdateContent> createState() => _UpdateContentState();
 }
 
-class _AddContentState extends State<AddContent> {
+class _UpdateContentState extends State<UpdateContent> {
   FirebaseAuth? _auth;
   FirebaseFirestore? _fireStore;
   User? user;
@@ -35,16 +35,22 @@ class _AddContentState extends State<AddContent> {
       databaseRef =
           FirebaseDatabase.instance.ref().child('contents').child(userUID!);
     }
+    getData();
   }
 
-  void saveUserData(
-      String? name, String? email, String? content, String? locate) {
-    String? currentTime = DateFormat("dd-MM-yyy H:m:s").format(DateTime.now());
+  void getData(){
+    contentController.text = widget.datas['content'];
+    locateController.text = widget.datas['locate'];
+  }
+
+  void saveUserData(String? name, String? email , String? content, String? locate) {
+
+    String? currentTime = DateFormat("dd-MM-yyy").format(DateTime.now());
     // The data you want to save
     Map<String, dynamic> userData = {
       'name': name ?? '',
       'email': email ?? '',
-      'content': content ?? '',
+      'content': content ?? '', 
       'locate': locate ?? '',
       'date': currentTime,
       // Add any other data you want to save.
@@ -52,15 +58,14 @@ class _AddContentState extends State<AddContent> {
     contentController.clear();
     locateController.clear();
     // Save the data
-    DatabaseReference? newRef = databaseRef?.push();
-    newRef?.set(userData).then((val) {
-      String newKey = newRef.key ?? '';
-      print("Data successfully saved! $newKey");
+    DatabaseReference? newRef = databaseRef?.child(widget.datas['key']);
+    newRef?.update(userData).then((val) {
+      print("update Data successfully saved!");
+      Navigator.push(context, MaterialPageRoute(builder: (_) => HomePage()));
     }).catchError((error) {
       print("Error saving data: $error");
     });
 
-    Navigator.push(context, MaterialPageRoute(builder: (_) => HomePage()));
   }
 
   @override
@@ -77,7 +82,8 @@ class _AddContentState extends State<AddContent> {
                 ),
               ),
             );
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
+          }
+          else if (snapshot.connectionState == ConnectionState.waiting) {
             return SafeArea(
               child: Container(
                 child: Center(
@@ -85,17 +91,16 @@ class _AddContentState extends State<AddContent> {
                 ),
               ),
             );
-          } else if (snapshot.hasData) {
-            DocumentSnapshot? document = snapshot.data;
-            Map<String, dynamic> data =
-                document?.data() as Map<String, dynamic>;
+          }
+          else if (snapshot.hasData) {
+            // DocumentSnapshot? document = snapshot.data;
+            // Map<String, dynamic> data = document?.data() as Map<String, dynamic>;
 
-            String? name = data["name"];
-            String? email = data["email"];
+
+            String? name = widget.datas['name'];
+            String? email = widget.datas['email'];
             return Scaffold(
-              appBar: AppBar(
-                title: Text("Add Content"),
-              ),
+              appBar: AppBar(title: Text("Add Content"),),
               body: Container(
                 child: Form(
                   key: formKey,
@@ -110,7 +115,7 @@ class _AddContentState extends State<AddContent> {
                           ),
                           controller: contentController,
                           validator: (val) {
-                            if (val == null || val.isEmpty) {
+                            if(val == null || val.isEmpty){
                               return "Please your enter content";
                             }
                             return null;
@@ -126,7 +131,7 @@ class _AddContentState extends State<AddContent> {
                           ),
                           controller: locateController,
                           validator: (val) {
-                            if (val == null || val.isEmpty) {
+                            if(val == null || val.isEmpty){
                               return "Please your enter locate";
                             }
                             return null;
@@ -137,11 +142,9 @@ class _AddContentState extends State<AddContent> {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            if (formKey.currentState?.validate() ?? false) {
-                              String content = contentController.text;
-                              String locate = locateController.text;
-                              saveUserData(name, email, content, locate);
-                            }
+                            String content = contentController.text;
+                            String locate = locateController.text ;
+                            saveUserData(name, email, content, locate);
                           },
                           child: Text("Save"),
                         ),
@@ -162,3 +165,4 @@ class _AddContentState extends State<AddContent> {
     );
   }
 }
+

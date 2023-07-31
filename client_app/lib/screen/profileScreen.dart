@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+// import 'dart:typed_data';
 import 'dart:async';
 
 import 'package:client_app/providers/auth_user.dart';
@@ -8,7 +8,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../models/utils.dart';
+
 import 'edirProfile.dart';
 
 class ProfileScreenApp extends StatefulWidget {
@@ -22,7 +22,7 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
   final Future<FirebaseApp> _firebase = Firebase.initializeApp();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Uint8List? _image;
+  // Uint8List? _image;
   // void selectImage() async {
   //   Uint8List img = await pickerImage(ImageSource.gallery);
   //   setState(() {

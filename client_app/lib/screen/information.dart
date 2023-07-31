@@ -84,9 +84,8 @@ class _RequestScreenState extends State<RequestScreen> {
                             date: DateTime.now(),
                           );
 
-                          var provider =
-                              Provider.of<InfoProvider>(context, listen: false);
-                          if (provider != null) {
+                          var provider = Provider.of<InfoProvider>(context, listen: false);
+                          if (provider != '') {
                             provider.addInfomation(info);
                             Navigator.of(context).pop();
                           }

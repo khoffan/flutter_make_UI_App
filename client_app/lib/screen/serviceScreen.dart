@@ -1,16 +1,16 @@
-import 'package:client_app/screen/chatpage.dart';
-import 'package:client_app/screen/home.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
+
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../UI/btnavigate.dart';
-import '../UI/btnavigater_responder.dart';
+
+
 import '../UI/dropdown.dart';
 import '../providers/auth_user.dart';
-import 'homeResponder.dart';
+
 import 'loadingScreen.dart';
-import 'showUser.dart';
+
 
 class ServiceScreen extends StatefulWidget {
   const ServiceScreen({super.key});
@@ -142,14 +142,14 @@ class _ServiceScreenState extends State<ServiceScreen> {
               Center(
                 child: ElevatedButton(
                   onPressed: () {
-                    if (_count == 0 && uid != null) {
+                    if (_count == 0 && uid != '') {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (_) => LoadingScreen(uid: uid ),
                         ),
                       );
                       AuthUsers().updateStatus(false,uid);
-                    } else if(_count == 1 && uid != null) {
+                    } else if(_count == 1 && uid != '') {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (_) => LoadingScreen(uid: uid ),

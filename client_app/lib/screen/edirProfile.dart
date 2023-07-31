@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:client_app/screen/profileScreen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,8 +19,8 @@ class EditProfile extends StatefulWidget {
 class _EditProfileState extends State<EditProfile> {
   final Future<FirebaseApp> firebase = Firebase.initializeApp();
   final _formKey = GlobalKey<FormState>();
-  TextEditingController nameController = TextEditingController();
-  TextEditingController bioController = TextEditingController();
+  TextEditingController dormController = TextEditingController();
+  TextEditingController stdController = TextEditingController();
 
   Uint8List? _image;
   void selectImage() async {
@@ -36,8 +36,8 @@ class _EditProfileState extends State<EditProfile> {
     }
 
     await AddProfile().saveProfile(name: name, bio: bio, file: _image!);
-    nameController.clear();
-    bioController.clear();
+    dormController.clear();
+    stdController.clear();
     Navigator.of(context)
         .pop();
   }
@@ -115,8 +115,8 @@ class _EditProfileState extends State<EditProfile> {
                             onPressed: () {
                               if (_formKey.currentState?.validate() ?? false) {
                                 _formKey.currentState?.save();
-                                String name = nameController.text;
-                                String bio = bioController.text;
+                                String name = dormController.text;
+                                String bio = stdController.text;
 
                                 saveFile(name, bio);
 
@@ -155,7 +155,7 @@ class _EditProfileState extends State<EditProfile> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 hintText: title),
-            controller: nameController,
+            controller: dormController,
             validator: (val) {
               if (val == null || val.isEmpty) {
                 return "please enter your name";
@@ -176,7 +176,7 @@ class _EditProfileState extends State<EditProfile> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 hintText: title),
-            controller: bioController,
+            controller: stdController,
             validator: (val) {
               if (val == null || val.isEmpty) {
                 return "please enter your name";
