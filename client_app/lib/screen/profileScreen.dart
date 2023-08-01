@@ -8,7 +8,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-
 import 'edirProfile.dart';
 
 class ProfileScreenApp extends StatefulWidget {
@@ -30,6 +29,7 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
   //   });
   // }
 
+  final TextStyle optionStyle = TextStyle(fontSize: 18);
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -75,12 +75,15 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
               } else if (snapshot.hasData) {
                 var data = snapshot.data?.data();
                 String name = data?["name"] ?? '';
-                String bio = data?["bio"] ?? '';
+                String email = data?["email"] ?? '';
+                String std = data?["stdid"] ?? '';
+                String room = data?["room"] ?? '';
+                String dorm = data?["dorm"] ?? '';
                 String image = data?["imageLink"] ?? '';
-                print(name + bio);
                 return Scaffold(
                   appBar: AppBar(
                     backgroundColor: Colors.blue,
+                    title: Text("UserProgile"),
                     actions: [
                       IconButton(
                         onPressed: () {
@@ -94,7 +97,8 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
                     width: double.infinity,
                     height: double.infinity,
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 20),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 8),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -108,31 +112,65 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
                             ],
                           ),
                           SizedBox(
-                            height: 20,
-                          ),
-                          Center(
-                            child: Column(
-                              children: [
-                                Text(name.toString()),
-                                Text(bio.toString()),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
                             height: 10,
                           ),
-                          Center(
-                            child: SizedBox(
-                              width: 200,
-                              child: ElevatedButton(
-                                onPressed: () async {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (context) => EditProfile()),
-                                  );
-                                },
-                                child: Text("Edit profile"),
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              // color: Colors.amber,
+                              child: Column(
+                                children: [
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text("name : " + name.toString(), style: optionStyle,),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text("dorm: " + dorm.toString(), style: optionStyle,),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text("room: " + room.toString(), style: optionStyle,),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text("StudentId: " + std.toString(), style: optionStyle,),
+                                    ],
+                                  ),
+                                  SizedBox(height: 20,),
+                                  Center(
+                                    child: SizedBox(
+                                      width: 200,
+                                      child: ElevatedButton(
+                                        onPressed: () async {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    EditProfile()),
+                                          );
+                                        },
+                                        child: Text("Edit profile"),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              color: Colors.red,
                             ),
                           ),
                         ],

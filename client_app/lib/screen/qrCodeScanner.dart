@@ -15,6 +15,9 @@ class QrscannerScreen extends StatefulWidget {
 class _QrscannerScreenState extends State<QrscannerScreen> {
   String? scannerResult;
   bool hasResult = false;
+  bool hasYouResult = false;
+  bool hasFaseResult = false;
+  bool hasLineResult = false;
 
   @override
   Widget build(BuildContext context) {
@@ -33,26 +36,10 @@ class _QrscannerScreenState extends State<QrscannerScreen> {
                   ),
                 ),
               ),
-              hasResult
-                  ? SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          if (scannerResult != null) {
-                            if (await canLaunch(scannerResult!)) {
-                              await launch(scannerResult!);
-                            } else {
-                              print("Could not launch the URL: $scannerResult");
-                            }
-                          }
-                        },
-                        child: Text("Click me"),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                        ),
-                      ),
-                    )
-                  : Container(),
+              qrLink(context, hasResult, scannerResult),
+              qrLink(context, hasFaseResult, scannerResult),
+              qrLink(context, hasLineResult, scannerResult),
+              qrLink(context, hasYouResult, scannerResult),
             ],
           ),
         ),
@@ -75,8 +62,48 @@ class _QrscannerScreenState extends State<QrscannerScreen> {
           hasResult = true;
         });
       }
+      if (scannerResult != null && scannerResult!.contains("youtube.com")) {
+        setState(() {
+          hasYouResult = true;
+        });
+      }
+      if (scannerResult != null && scannerResult!.contains("facebook.com")) {
+        setState(() {
+          hasFaseResult = true;
+        });
+      }
+      if (scannerResult != null && scannerResult!.contains("line.me")) {
+        setState(() {
+          hasLineResult = true;
+        });
+      }
     } else {
       print("Permission not granted");
+    }
+  }
+
+  Widget qrLink(context, bool? hasQrlink, String? scannerResult) {
+    if (hasQrlink == true) {
+      return SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () async {
+            if (scannerResult != null) {
+              if (await canLaunch(scannerResult)) {
+                await launch(scannerResult);
+              } else {
+                print("Could not launch the URL: $scannerResult");
+              }
+            }
+          },
+          child: Text("Click me"),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue,
+          ),
+        ),
+      );
+    } else {
+      return Container();
     }
   }
 }

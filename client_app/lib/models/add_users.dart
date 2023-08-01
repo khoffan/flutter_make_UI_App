@@ -28,10 +28,13 @@ class UsersFirestore {
           'password': hashPw,
         };
 
-        if(status != null){
-          await updateStatus(status,uid); 
+        if (status != null) {
+          await updateStatus(status, uid);
         }
-        await _firestore.collection("Users").doc(uid).set(data, SetOptions(merge: true));
+        await _firestore
+            .collection("Users")
+            .doc(uid)
+            .set(data, SetOptions(merge: true));
         print("Data saved successfully!");
         resp = "Success";
       } else {
@@ -44,7 +47,7 @@ class UsersFirestore {
     return resp;
   }
 
- Future<void> updateStatus(bool status, String uid) async {
+  Future<void> updateStatus(bool status, String uid) async {
     Map<String, dynamic> data = {
       'status': status,
     };

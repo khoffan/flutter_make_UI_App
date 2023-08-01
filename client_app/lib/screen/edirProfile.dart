@@ -20,6 +20,7 @@ class _EditProfileState extends State<EditProfile> {
   final Future<FirebaseApp> firebase = Firebase.initializeApp();
   final _formKey = GlobalKey<FormState>();
   TextEditingController dormController = TextEditingController();
+  TextEditingController roomController = TextEditingController();
   TextEditingController stdController = TextEditingController();
 
   Uint8List? _image;
@@ -30,13 +31,14 @@ class _EditProfileState extends State<EditProfile> {
     });
   }
 
-  void saveFile(String name, String bio) async {
+  void saveFile(String std, String drom, String room) async {
     if(_image == null){
       return;
     }
 
-    await AddProfile().saveProfile(name: name, bio: bio, file: _image!);
+    await AddProfile().saveProfile(std: std, room: room, file: _image!, dorm: drom);
     dormController.clear();
+    roomController.clear();
     stdController.clear();
     Navigator.of(context)
         .pop();
@@ -101,8 +103,9 @@ class _EditProfileState extends State<EditProfile> {
                       Container(
                         padding: const EdgeInsets.all(15),
                         child: Column(children: [
-                          buildFeildInput(context,"dorm"),
                           buildFeildInput(context,"student-id"),
+                          buildFeildInput(context,"dorm"),
+                          buildFeildInput(context,"room"),
                         ]),
                       ),
                       SizedBox(
@@ -115,10 +118,11 @@ class _EditProfileState extends State<EditProfile> {
                             onPressed: () {
                               if (_formKey.currentState?.validate() ?? false) {
                                 _formKey.currentState?.save();
-                                String name = dormController.text;
-                                String bio = stdController.text;
+                                String dorm = dormController.text;
+                                String std = stdController.text;
+                                String room = roomController.text;
 
-                                saveFile(name, bio);
+                                saveFile(std, room,dorm);
 
                                 _formKey.currentState?.reset();
                               }
@@ -145,6 +149,27 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   GestureDetector buildFeildInput(context, String title) {
+    if(title == "student-id"){
+      return GestureDetector(
+        child: Container(
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+          child: TextFormField(
+            decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                hintText: title),
+            controller: stdController,
+            validator: (val) {
+              if (val == null || val.isEmpty) {
+                return "please enter your name";
+              }
+              return null;
+            },
+          ),
+        ),
+      );
+    }
     if (title == "dorm") {
       return GestureDetector(
         child: Container(
@@ -166,7 +191,7 @@ class _EditProfileState extends State<EditProfile> {
         ),
       );
     }
-    else if(title == "student-id"){
+    if(title == "room"){
       return GestureDetector(
         child: Container(
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
@@ -176,7 +201,7 @@ class _EditProfileState extends State<EditProfile> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 hintText: title),
-            controller: stdController,
+            controller: roomController,
             validator: (val) {
               if (val == null || val.isEmpty) {
                 return "please enter your name";

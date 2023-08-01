@@ -24,18 +24,29 @@ class AddProfile {
     }
   }
   Future<String> saveProfile(
-      {required String name,
-      required String bio,
+      {required String std,
+      required String room,required String dorm,
       required Uint8List file}) async {
     String resp = "some Error";
     try {
       print("Attempting to save data...");
-      if (name.isNotEmpty && bio.isNotEmpty) {
+      
+      if (std.isNotEmpty && dorm.isNotEmpty && room.isNotEmpty) {
+        
+        Map<String, dynamic> userData = await getUsers(_auth.currentUser?.uid ?? ''); 
+
+        
+
         String imageURL = await uploadImagetoStorage('profileImage', file);
+        String name = userData['name'] ?? '';
+        String email = userData['email'] ?? '';
 
         await _firestore.collection("userProfile").doc(_auth.currentUser?.uid ?? '').set({
           'name': name,
-          'bio': bio,
+          'email': email,
+          'stdid': std,
+          'dorm': dorm,
+          'room': room,
           'imageLink': imageURL,
         });
         print("Data saved successfully!");
@@ -48,5 +59,21 @@ class AddProfile {
     }
 
     return resp;
+  }
+
+  Future<Map<String, dynamic>> getUsers(String uid) async {
+    try{
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await _firestore.collection('Users').doc(uid).get();
+
+      if(snapshot.exists && snapshot != null){
+        Map<String,dynamic> userData = snapshot.data()!;
+        return userData;
+      }
+      else{
+        throw "data not found";
+      }
+    } catch (e){
+      throw e.toString();
+    }
   }
 }
