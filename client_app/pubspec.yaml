@@ -52,6 +52,7 @@ dependencies:
   qrscan: ^0.3.3
   permission_handler: ^10.4.3
   url_launcher: ^6.1.12
+  uuid: ^3.0.7
 
 flutter_icons:
   android: true

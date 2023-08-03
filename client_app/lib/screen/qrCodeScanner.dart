@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import "package:image_picker/image_picker.dart";
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -14,6 +15,7 @@ class QrscannerScreen extends StatefulWidget {
 
 class _QrscannerScreenState extends State<QrscannerScreen> {
   String? scannerResult;
+  bool isCameroMode = true;
   bool hasResult = false;
   bool hasYouResult = false;
   bool hasFaseResult = false;
@@ -40,45 +42,69 @@ class _QrscannerScreenState extends State<QrscannerScreen> {
               qrLink(context, hasFaseResult, scannerResult),
               qrLink(context, hasLineResult, scannerResult),
               qrLink(context, hasYouResult, scannerResult),
+              ElevatedButton(
+                onPressed: _imagePickerFromGallory,
+                child: Text("Select Image"),
+              ),
             ],
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _startScan,
-        child: Icon(Icons.qr_code_scanner_rounded),
+        onPressed: () {
+          setState(() {
+            isCameroMode = !isCameroMode;
+            _startScan();
+          });
+        },
+        child: Icon(isCameroMode ? Icons.image : Icons.qr_code_scanner_rounded),
       ),
     );
   }
 
   _startScan() async {
-    if (await Permission.camera.request().isGranted) {
-      String? cameraScanResult = await scanner.scan();
-      setState(() {
-        scannerResult = cameraScanResult;
-      });
-      if (scannerResult != null && scannerResult!.contains("qrfy.com")) {
+    String? cameraScanResult;
+    if (isCameroMode) {
+      if (await Permission.camera.request().isGranted) {
+        cameraScanResult = await scanner.scan();
         setState(() {
-          hasResult = true;
+          scannerResult = cameraScanResult;
         });
-      }
-      if (scannerResult != null && scannerResult!.contains("youtube.com")) {
-        setState(() {
-          hasYouResult = true;
-        });
-      }
-      if (scannerResult != null && scannerResult!.contains("facebook.com")) {
-        setState(() {
-          hasFaseResult = true;
-        });
-      }
-      if (scannerResult != null && scannerResult!.contains("line.me")) {
-        setState(() {
-          hasLineResult = true;
-        });
+        if (scannerResult != null && scannerResult!.contains("qrfy.com")) {
+          setState(() {
+            hasResult = true;
+          });
+        }
+        if (scannerResult != null && scannerResult!.contains("youtube.com")) {
+          setState(() {
+            hasYouResult = true;
+          });
+        }
+        if (scannerResult != null && scannerResult!.contains("facebook.com")) {
+          setState(() {
+            hasFaseResult = true;
+          });
+        }
+        if (scannerResult != null && scannerResult!.contains("line.me")) {
+          setState(() {
+            hasLineResult = true;
+          });
+        } else {
+          print("Permission not denine");
+          return;
+        }
       }
     } else {
-      print("Permission not granted");
+      final pickedImage =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (pickedImage != null) {
+        String? imageScanResult = await scanner.scanPath(pickedImage.path);
+        if (imageScanResult != null) {
+          setState(() {
+            scannerResult = imageScanResult;
+          });
+        }
+      }
     }
   }
 
@@ -104,6 +130,19 @@ class _QrscannerScreenState extends State<QrscannerScreen> {
       );
     } else {
       return Container();
+    }
+  }
+
+  Future<void> _imagePickerFromGallory() async {
+    final pickedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      String? imageScanResult = await scanner.scanPath(pickedImage.path);
+      if (imageScanResult != null) {
+        setState(() {
+          scannerResult = imageScanResult;
+        });
+      }
     }
   }
 }

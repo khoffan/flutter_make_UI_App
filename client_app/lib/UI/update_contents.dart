@@ -38,19 +38,19 @@ class _UpdateContentState extends State<UpdateContent> {
     getData();
   }
 
-  void getData(){
+  void getData() {
     contentController.text = widget.datas['content'];
     locateController.text = widget.datas['locate'];
   }
 
-  void saveUserData(String? name, String? email , String? content, String? locate) {
-
+  void saveUserData(
+      String? name, String? email, String? content, String? locate) {
     String? currentTime = DateFormat("dd-MM-yyy").format(DateTime.now());
     // The data you want to save
     Map<String, dynamic> userData = {
       'name': name ?? '',
       'email': email ?? '',
-      'content': content ?? '', 
+      'content': content ?? '',
       'locate': locate ?? '',
       'date': currentTime,
       // Add any other data you want to save.
@@ -61,11 +61,10 @@ class _UpdateContentState extends State<UpdateContent> {
     DatabaseReference? newRef = databaseRef?.child(widget.datas['key']);
     newRef?.update(userData).then((val) {
       print("update Data successfully saved!");
-      Navigator.push(context, MaterialPageRoute(builder: (_) => HomePage()));
+      Navigator.pop(context);
     }).catchError((error) {
       print("Error saving data: $error");
     });
-
   }
 
   @override
@@ -82,8 +81,7 @@ class _UpdateContentState extends State<UpdateContent> {
                 ),
               ),
             );
-          }
-          else if (snapshot.connectionState == ConnectionState.waiting) {
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
             return SafeArea(
               child: Container(
                 child: Center(
@@ -91,16 +89,16 @@ class _UpdateContentState extends State<UpdateContent> {
                 ),
               ),
             );
-          }
-          else if (snapshot.hasData) {
+          } else if (snapshot.hasData) {
             // DocumentSnapshot? document = snapshot.data;
             // Map<String, dynamic> data = document?.data() as Map<String, dynamic>;
-
 
             String? name = widget.datas['name'];
             String? email = widget.datas['email'];
             return Scaffold(
-              appBar: AppBar(title: Text("Add Content"),),
+              appBar: AppBar(
+                title: Text("Add Content"),
+              ),
               body: Container(
                 child: Form(
                   key: formKey,
@@ -115,7 +113,7 @@ class _UpdateContentState extends State<UpdateContent> {
                           ),
                           controller: contentController,
                           validator: (val) {
-                            if(val == null || val.isEmpty){
+                            if (val == null || val.isEmpty) {
                               return "Please your enter content";
                             }
                             return null;
@@ -131,7 +129,7 @@ class _UpdateContentState extends State<UpdateContent> {
                           ),
                           controller: locateController,
                           validator: (val) {
-                            if(val == null || val.isEmpty){
+                            if (val == null || val.isEmpty) {
                               return "Please your enter locate";
                             }
                             return null;
@@ -142,9 +140,11 @@ class _UpdateContentState extends State<UpdateContent> {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            String content = contentController.text;
-                            String locate = locateController.text ;
-                            saveUserData(name, email, content, locate);
+                            if (formKey.currentState?.validate() ?? false) {
+                              String content = contentController.text;
+                              String locate = locateController.text;
+                              saveUserData(name, email, content, locate);
+                            }
                           },
                           child: Text("Save"),
                         ),
@@ -165,4 +165,3 @@ class _UpdateContentState extends State<UpdateContent> {
     );
   }
 }
-

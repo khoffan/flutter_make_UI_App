@@ -24,6 +24,9 @@ class _ServiceScreenState extends State<ServiceScreen> {
   bool isDefaultColor2 = true; // Track the current state
   Color? containerColor1 = Colors.transparent;
   Color? containerTextColor1 = const Color.fromARGB(0, 0, 0, 0);
+
+  List<bool> buttonStates = [true, true, true];
+
   String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
   @override
   Widget build(BuildContext context) {
@@ -51,10 +54,12 @@ class _ServiceScreenState extends State<ServiceScreen> {
                   ),
                 ),
               ),
+              SizedBox(
+                height: 10,
+              ),
               Expanded(
                 flex: 0,
                 child: Container(
-                  color: Colors.amber,
                   child: Column(
                     children: [
                       Container(
@@ -65,12 +70,15 @@ class _ServiceScreenState extends State<ServiceScreen> {
                               fontSize: 16, fontWeight: FontWeight.normal),
                         ),
                       ),
+                      SizedBox(
+                        height: 10,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          btnHourwork(context, '1-3ชม'),
-                          btnHourwork(context, '4-6ชม'),
-                          btnHourwork(context, '6-8ชม'),
+                          btnHourwork('1-3ชม', 0),
+                          btnHourwork('4-6ชม', 1),
+                          btnHourwork('6-8ชม', 2),
                         ],
                       ),
                     ],
@@ -183,26 +191,28 @@ class _ServiceScreenState extends State<ServiceScreen> {
     );
   }
 
-  GestureDetector btnHourwork(BuildContext context, String title) {
-    bool isDefaultColorbtn = true;
+  GestureDetector btnHourwork(String title, int index) {
     return GestureDetector(
       onTap: () {
         setState(() {
-          isDefaultColorbtn = false;
+          for(int i = 0; i < buttonStates.length; i++){
+            if(i != index) {
+              buttonStates[i] = true;
+              onClick = buttonStates[i];
+            }
+          }
+          buttonStates[index] = !buttonStates[index];
         });
+        print(onClick);
       },
       child: Container(
-        child: ElevatedButton(
-          onPressed: () {},
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.amber,
-            backgroundColor: Colors.deepOrangeAccent[200],
-          ),
-          child: Text(
-            title,
-            style: TextStyle(color: Colors.black),
-          ),
-        ),
+        width: MediaQuery.of(context).size.width / 6,
+        decoration: BoxDecoration(
+            border: Border.all(color: Colors.black),
+            borderRadius: BorderRadius.circular(20),
+            // ignore: dead_code
+            color: buttonStates[index] ? Colors.transparent : Colors.amber),
+        child: Center(child: Text(title)),
       ),
     );
   }

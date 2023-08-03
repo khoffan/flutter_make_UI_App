@@ -26,7 +26,7 @@ class BottomNavigationBarAppRequester extends StatelessWidget {
 class BottomNavigationBarScreen extends StatefulWidget {
   const BottomNavigationBarScreen({super.key});
 
-  String? get receivedData => null;
+
 
   @override
   State<BottomNavigationBarScreen> createState() =>

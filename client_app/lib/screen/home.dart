@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 
 import '../UI/add_content.dart';
+import '../UI/btnavigate.dart';
 import '../UI/update_contents.dart';
 
 class HomePage extends StatefulWidget {
@@ -32,8 +35,7 @@ class _HomePageState extends State<HomePage> {
 
     refQ.onValue.listen((event) {
       if (event.snapshot.value != null) {
-        Map<dynamic, dynamic> values =
-            event.snapshot.value as Map<dynamic, dynamic>;
+        Map values = event.snapshot.value as Map;
         List<Map> tempList = values.values.toList().cast<Map>();
         tempList.sort((a, b) => b['date']
             .compareTo(a['date'])); // Sort in descending order based on 'date'
@@ -64,20 +66,49 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: Container(
-        child: Column(
-          children: [
-            Flexible(
-              child: FirebaseAnimatedList(
-                query: refQ,
-                itemBuilder: (context, snapshot, animation, index) {
-                  Map value = dataList[index];
-                  value['key'] = value['key'] ?? '';
-                  return showDetail(usermap: value);
-                },
+        child: dataList.isEmpty
+            ? Center(
+                child: Text("no content on this page"),
+              )
+            : Column(
+                children: [
+                  Flexible(
+                    child: FirebaseAnimatedList(
+                      query: refQ,
+                      itemBuilder: (BuildContext context, DataSnapshot snapshot,
+                          Animation<double> animation, int index) {
+                        if (snapshot.value == null) {
+                          return Container(); // Return an empty container if the value is null
+                        }
+
+                        dynamic value = snapshot.value;
+                        if (value is Map) {
+                          // If the value is already a Map, use it directly
+                          value['key'] = snapshot.key ??
+                              ''; // Get the key from the snapshot
+                        } else if (value is String) {
+                          // If the value is a String, decode it using json.decode()
+                          Map<String, dynamic> decodedValue =
+                              json.decode(value);
+                          if (decodedValue is Map) {
+                            value = decodedValue;
+                            value['key'] = snapshot.key ??
+                                ''; // Get the key from the snapshot
+                          } else {
+                            // Handle the case where the decoded value is not a Map (if needed)
+                            return Container();
+                          }
+                        } else {
+                          // Handle other data types if needed
+                          return Container();
+                        }
+
+                        return showDetail(usermap: value);
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -136,7 +167,7 @@ class _HomePageState extends State<HomePage> {
               children: [
                 IconButton(
                   onPressed: () {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                         builder: (_) => UpdateContent(
@@ -150,6 +181,7 @@ class _HomePageState extends State<HomePage> {
                 IconButton(
                   onPressed: () {
                     refdb?.child(keyDb).remove();
+                    print("remove: " + keyDb);
                   },
                   icon: Icon(
                     Icons.delete,

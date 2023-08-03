@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../screen/home.dart';
+import 'btnavigate.dart';
 
 class AddContent extends StatefulWidget {
   const AddContent({super.key});
@@ -56,11 +57,11 @@ class _AddContentState extends State<AddContent> {
     newRef?.set(userData).then((val) {
       String newKey = newRef.key ?? '';
       print("Data successfully saved! $newKey");
+      Navigator.pop(context);
     }).catchError((error) {
       print("Error saving data: $error");
     });
 
-    Navigator.push(context, MaterialPageRoute(builder: (_) => HomePage()));
   }
 
   @override
