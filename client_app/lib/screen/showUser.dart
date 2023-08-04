@@ -61,7 +61,7 @@ class _MyhomeState extends State<Myhome> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ChatPage(
+              builder: (context) => ChatScreen(
                 reciveUserEmail: data['email'] ?? '', // Use ?? to provide a default value if null
                 reciveUseruid: data['uid'] ?? '', // Use ?? to provide a default value if null
               ),
