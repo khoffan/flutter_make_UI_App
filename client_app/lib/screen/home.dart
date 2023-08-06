@@ -1,12 +1,9 @@
-import 'dart:convert';
-
+import 'package:client_app/providers/database_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 
 import '../UI/add_content.dart';
-import '../UI/btnavigate.dart';
 import '../UI/update_contents.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,109 +14,79 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  FirebaseAuth _auth = FirebaseAuth.instance;
-  late Query refQ; // Declare refQ as a late variable
-  DatabaseReference? refdb;
-
-  List<Map> dataList = [];
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late CollectionReference _contentsCollection;
+  List<QueryDocumentSnapshot> dataList = [];
 
   @override
   void initState() {
     super.initState();
-    refQ = FirebaseDatabase.instance
-        .ref()
-        .child('contents')
-        .child(_auth.currentUser?.uid ?? '')
-        .orderByChild('date')
-        .limitToLast(50);
+    _contentsCollection = _firestore.collection('contents');
+    fetchContents();
+  }
 
-    refQ.onValue.listen((event) {
-      if (event.snapshot.value != null) {
-        Map values = event.snapshot.value as Map;
-        List<Map> tempList = values.values.toList().cast<Map>();
-        tempList.sort((a, b) => b['date']
-            .compareTo(a['date'])); // Sort in descending order based on 'date'
-        setState(() {
-          dataList = tempList;
-        }); // Trigger a rebuild after data is fetched and sorted
-      }
-    });
+  void fetchContents() async {
+    try {
+      QuerySnapshot querySnapshot = await _contentsCollection
+          .doc(_auth.currentUser?.uid) // Use the user's uid as the document ID
+          .collection('userContents')
+          .where('uid', isEqualTo: _auth.currentUser?.uid)
+          .orderBy('date', descending: true)
+          .limit(50)
+          .get();
 
-    refdb = FirebaseDatabase.instance
-        .ref()
-        .child('contents')
-        .child(_auth.currentUser?.uid ?? '');
+      setState(() {
+        dataList = querySnapshot.docs;
+      });
+    } catch (e) {
+      print('Error fetching contents: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("list Contents"),
+        title: Text("List Contents"),
         actions: [
           IconButton(
-              onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (_) => AddContent()));
-              },
-              icon: Icon(Icons.add)),
+            onPressed: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => AddContent()));
+            },
+            icon: Icon(Icons.add),
+          ),
         ],
       ),
       body: Container(
         child: dataList.isEmpty
             ? Center(
-                child: Text("no content on this page"),
+                child: Text("No content on this page"),
               )
-            : Column(
-                children: [
-                  Flexible(
-                    child: FirebaseAnimatedList(
-                      query: refQ,
-                      itemBuilder: (BuildContext context, DataSnapshot snapshot,
-                          Animation<double> animation, int index) {
-                        if (snapshot.value == null) {
-                          return Container(); // Return an empty container if the value is null
-                        }
+            : ListView.builder(
+                itemCount: dataList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  DocumentSnapshot snapshot = dataList[index];
+                  Map<String, dynamic> usermap =
+                      snapshot.data() as Map<String, dynamic>;
 
-                        dynamic value = snapshot.value;
-                        if (value is Map) {
-                          // If the value is already a Map, use it directly
-                          value['key'] = snapshot.key ??
-                              ''; // Get the key from the snapshot
-                        } else if (value is String) {
-                          // If the value is a String, decode it using json.decode()
-                          Map<String, dynamic> decodedValue =
-                              json.decode(value);
-                          if (decodedValue is Map) {
-                            value = decodedValue;
-                            value['key'] = snapshot.key ??
-                                ''; // Get the key from the snapshot
-                          } else {
-                            // Handle the case where the decoded value is not a Map (if needed)
-                            return Container();
-                          }
-                        } else {
-                          // Handle other data types if needed
-                          return Container();
-                        }
-
-                        return showDetail(usermap: value);
-                      },
-                    ),
-                  ),
-                ],
+                  return showDetail(usermap: usermap, documentId: snapshot.id);
+                },
               ),
       ),
     );
   }
 
-  Widget showDetail({required Map usermap}) {
+  Widget showDetail(
+      {required Map<String, dynamic> usermap, required String documentId}) {
     final String content = usermap['content'] ?? '';
     final String locate = usermap['locate'] ?? '';
     final String name = usermap['name'] ?? '';
     final String date = usermap['date'] ?? '';
-    final String keyDb = usermap['key'] ?? '';
-
+    print(content);
+    print(locate);
+    print(name);
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Container(
@@ -168,20 +135,22 @@ class _HomePageState extends State<HomePage> {
                 IconButton(
                   onPressed: () {
                     Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => UpdateContent(
-                          datas: usermap,
-                        ),
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => UpdateContent(
+                        datas: usermap,
+                        documentId: documentId,
                       ),
-                    );
+                    ),
+                  );
                   },
                   icon: Icon(Icons.edit),
                 ),
                 IconButton(
                   onPressed: () {
-                    refdb?.child(keyDb).remove();
-                    print("remove: " + keyDb);
+                    DatabaseService().removeUserData(
+                        uid: _auth.currentUser?.uid ?? '', docId: documentId);
+                    fetchContents();
                   },
                   icon: Icon(
                     Icons.delete,

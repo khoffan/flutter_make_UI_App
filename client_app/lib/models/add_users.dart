@@ -1,3 +1,4 @@
+import 'package:client_app/providers/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:bcrypt/bcrypt.dart';
 
@@ -20,12 +21,15 @@ class UsersFirestore {
           phone.isNotEmpty) {
         String hashPw = BCrypt.hashpw(password, BCrypt.gensalt());
 
+        bool? avtiveLogin = await Users.getLogin();
+
         Map<String, dynamic> data = {
           'uid': uid,
           'name': name,
           'email': email,
           'phone': phone,
           'password': hashPw,
+          'isActives': avtiveLogin
         };
 
         if (status != null) {

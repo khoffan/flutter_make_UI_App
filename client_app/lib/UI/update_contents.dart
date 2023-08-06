@@ -4,11 +4,15 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../providers/database_service.dart';
 import '../screen/home.dart';
+import 'btnavigate.dart';
 
 class UpdateContent extends StatefulWidget {
-  const UpdateContent({super.key, required this.datas});
+  const UpdateContent(
+      {super.key, required this.datas, required this.documentId});
   final Map datas;
+  final String documentId;
   @override
   State<UpdateContent> createState() => _UpdateContentState();
 }
@@ -29,12 +33,12 @@ class _UpdateContentState extends State<UpdateContent> {
     super.initState();
     _auth = FirebaseAuth.instance;
     _fireStore = FirebaseFirestore.instance;
-    user = _auth?.currentUser;
-    userUID = user?.uid;
-    if (userUID != null) {
-      databaseRef =
-          FirebaseDatabase.instance.ref().child('contents').child(userUID!);
+
+    // Make sure user is not null before retrieving UID
+    if (_auth?.currentUser != null) {
+      userUID = _auth?.currentUser?.uid;
     }
+
     getData();
   }
 
@@ -44,34 +48,36 @@ class _UpdateContentState extends State<UpdateContent> {
   }
 
   void saveUserData(
-      String? name, String? email, String? content, String? locate) {
-    String? currentTime = DateFormat("dd-MM-yyy").format(DateTime.now());
-    // The data you want to save
-    Map<String, dynamic> userData = {
-      'name': name ?? '',
-      'email': email ?? '',
-      'content': content ?? '',
-      'locate': locate ?? '',
-      'date': currentTime,
-      // Add any other data you want to save.
-    };
-    contentController.clear();
-    locateController.clear();
-    // Save the data
-    DatabaseReference? newRef = databaseRef?.child(widget.datas['key']);
-    newRef?.update(userData).then((val) {
-      print("update Data successfully saved!");
-      Navigator.pop(context);
-    }).catchError((error) {
-      print("Error saving data: $error");
-    });
+      String? name, String? email, String? content, String? locate) async {
+    if (userUID != null) {
+      // Check if userUID is not null
+      String currentTime = DateFormat("dd-MM-yyyy").format(DateTime.now());
+
+      await DatabaseService().updateUserData(
+        uid: userUID ?? '',
+        docId: widget.documentId ?? '', // Assuming 'key' is the document ID
+        content: content ?? '',
+        locate: locate ?? '',
+      );
+
+      contentController.clear();
+      locateController.clear();
+
+      print("Data successfully updated!");
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => BottomNavigationBarAppRequester(),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder<DocumentSnapshot>(
-        future: _fireStore?.collection('Users').doc(userUID).get(),
+        future: _fireStore?.collection('Users').doc(widget.documentId).get(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return SafeArea(
