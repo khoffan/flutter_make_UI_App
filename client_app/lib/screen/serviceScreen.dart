@@ -1,3 +1,4 @@
+import 'package:client_app/providers/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -47,9 +48,9 @@ class _ServiceScreenState extends State<ServiceScreen> {
                       const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                   child: Column(
                     children: [
-                      buildContainer("ผู้รับฝาก", Icons.motorcycle, 0),
+                      buildContainer("Rider", Icons.motorcycle, 0),
                       SizedBox(height: 20),
-                      buildContainer("ผู้ฝาก", Icons.local_grocery_store, 1),
+                      buildContainer("Customers", Icons.local_grocery_store, 1),
                     ],
                   ),
                 ),
@@ -119,7 +120,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                                   builder: (_) => LoadingScreen(uid: uid),
                                 ),
                               );
-                              AuthUsers().updateStatus(false, uid);
+                              ContentService().updateContentStatus(uid, false);
                             } else if (_count == 1 && uid != '') {
                               print(_count);
                               Navigator.of(context).push(
@@ -127,7 +128,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                                   builder: (_) => LoadingScreen(uid: uid),
                                 ),
                               );
-                              AuthUsers().updateStatus(true, uid);
+                              ContentService().updateContentStatus(uid, true);
                             }
                           },
                           child: Text("Matching"),

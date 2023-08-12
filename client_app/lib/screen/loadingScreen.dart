@@ -20,7 +20,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
     return Scaffold(
       body: FutureBuilder<DocumentSnapshot>(
           future: FirebaseFirestore.instance
-              .collection("Users")
+              .collection("contents")
               .doc(widget.uid)
               .get(),
           builder: (context, snapshot) {
@@ -28,35 +28,55 @@ class _LoadingScreenState extends State<LoadingScreen> {
               Center(
                 child: Text("Error: ${snapshot.error}"),
               );
-            }
-            else if (snapshot.connectionState == ConnectionState.waiting) {
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
               Center(
                 child: CircularProgressIndicator(),
               );
-            }
-            else if (snapshot.hasData) {
+            } else if (snapshot.hasData) {
               DocumentSnapshot? document = snapshot.data;
-              Map<String, dynamic>? data =
-                  document?.data() as Map<String, dynamic>;
-
-              bool? status = data['status'];
-              if (status == true) {
-                SchedulerBinding.instance.addPostFrameCallback((_) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => Myhome()),
-                  );
-                });
-                print(status);
-              } else if (status == false) {
-                SchedulerBinding.instance.addPostFrameCallback((_) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (_) => HomeResponder(),
-                    ),
-                  );
-                });
-                print(status);
+              if (document != null && document.exists) {
+                Map<String, dynamic> data =
+                    document.data() as Map<String, dynamic>;
+                if (data != null) {
+                  bool? status = data['status'];
+                  if (status == true) {
+                    SchedulerBinding.instance.addPostFrameCallback((_) {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (_) => Myhome()),
+                      );
+                    });
+                    print(status);
+                  } else if (status == false) {
+                    SchedulerBinding.instance.addPostFrameCallback((_) {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (_) => ContentPageRider(),
+                        ),
+                      );
+                    });
+                    print(status);
+                  }
+                }
               }
+
+              // bool? status = data['status'];
+              // if (status == true) {
+              //   SchedulerBinding.instance.addPostFrameCallback((_) {
+              //     Navigator.of(context).pushReplacement(
+              //       MaterialPageRoute(builder: (_) => Myhome()),
+              //     );
+              //   });
+              //   print(status);
+              // } else if (status == false) {
+              //   SchedulerBinding.instance.addPostFrameCallback((_) {
+              //     Navigator.of(context).pushReplacement(
+              //       MaterialPageRoute(
+              //         builder: (_) => ContentPageRider(),
+              //       ),
+              //     );
+              //   });
+              //   print(status);
+              // }
             }
             return Container();
           }),

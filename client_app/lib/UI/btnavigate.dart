@@ -1,5 +1,6 @@
 
 import 'package:client_app/screen/homeResponder.dart';
+import 'package:client_app/screen/wallet_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../screen/home.dart';
@@ -38,8 +39,8 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   // static const TextStyle optionStyle =
   //     TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
-    HomePage(),
-    HomeResponder(),
+    ContentPage(),
+    WalletPage(),
     QrscannerScreen(),
     ProfileScreenApp(),
   ];

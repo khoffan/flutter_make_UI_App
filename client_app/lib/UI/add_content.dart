@@ -1,132 +1,135 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../providers/database_service.dart';
 
-class AddContent extends StatefulWidget {
-  const AddContent({Key? key}) : super(key: key);
 
+
+class AddContentPage extends StatefulWidget {
   @override
-  State<AddContent> createState() => _AddContentState();
+  _AddContentPageState createState() => _AddContentPageState();
 }
 
-class _AddContentState extends State<AddContent> {
-  FirebaseFirestore _fireStore = FirebaseFirestore.instance;
-  late User user;
-  late String userUID;
+class _AddContentPageState extends State<AddContentPage> {
+  FirebaseAuth _auth = FirebaseAuth.instance;
 
-  final formKey = GlobalKey<FormState>();
-  TextEditingController contentController = TextEditingController();
-  TextEditingController locateController = TextEditingController();
+  final _formkey = GlobalKey<FormState>();
+  final _contentControoler = TextEditingController();
+  final locateController = TextEditingController();
 
-  @override
+  String? _name;
+  String? _email;
+  String? _uid;
+
+  void fetchData() async {
+    try {
+      final currentUser = _auth.currentUser!;
+      if (currentUser != null) {
+        DocumentSnapshot userSnap = await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(currentUser.uid)
+            .get();
+        setState(() {
+          _uid = userSnap['uid'] ?? '';
+          _name = userSnap['name'] ?? '';
+          _email = userSnap['email'] ?? '';
+        });
+      }
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
+  void _addContent(String documentId) {
+    final content = _contentControoler.text;
+    final locate = locateController.text;
+
+    
+
+    if (content.isEmpty || locate.isEmpty) {
+      return;
+    }
+
+    final contentData = {
+      'contents': content,
+      'locate': locate,
+      'name': _name,
+      'email': _email,
+      'uid': _uid,
+      'date': Timestamp.now(),
+    };
+
+    try {
+      ContentService contentService = ContentService();
+      contentService.saveContent(documentId, contentData).then((_) {
+        _contentControoler.clear();
+        locateController.clear();
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Content added successfully')));
+      }).catchError((error) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Error adding content')));
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error creating content document')));
+    }
+  }
+
+   @override
   void initState() {
     super.initState();
-    user = FirebaseAuth.instance.currentUser!;
-    userUID = user.uid;
+    fetchData();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Add Content"),
-      ),
-      body: FutureBuilder<DocumentSnapshot>(
-        future: _fireStore.collection('Users').doc(userUID).get(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return SafeArea(
-              child: Container(
-                child: Center(
-                  child: Text("Error: ${snapshot.error}"),
-                ),
+      appBar: AppBar(title: Text('Add Content')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formkey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextFormField(
+                controller: _contentControoler,
+                decoration: InputDecoration(labelText: 'Content'),
+                validator: (val) {
+                  if (val == null || val.isEmpty) {
+                    return "Please enter your content";
+                  }
+                  return null;
+                },
               ),
-            );
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return SafeArea(
-              child: Container(
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
+              SizedBox(height: 12),
+              TextFormField(
+                controller: locateController,
+                decoration: InputDecoration(labelText: 'Locate'),
+                validator: (val) {
+                  if (val == null || val.isEmpty) {
+                    return "Please enter your content";
+                  }
+                  return null;
+                },
               ),
-            );
-          } else if (snapshot.hasData) {
-            DocumentSnapshot? document = snapshot.data;
-            Map<String, dynamic> data = document?.data() as Map<String, dynamic>;
-
-            String uidUser = data["uid"];
-            String nameUser = data["name"];
-            String emailUser = data["email"];
-            
-            return Container(
-              child: Form(
-                key: formKey,
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        decoration: InputDecoration(
-                          label: Text("Content"),
-                          hintText: "Enter your content",
-                        ),
-                        controller: contentController,
-                        validator: (val) {
-                          if (val == null || val.isEmpty) {
-                            return "Please enter your content";
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: 20),
-                      TextFormField(
-                        decoration: InputDecoration(
-                          label: Text("Locate"),
-                          hintText: "Enter your Locate",
-                        ),
-                        controller: locateController,
-                        validator: (val) {
-                          if (val == null || val.isEmpty) {
-                            return "Please enter your locate";
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (formKey.currentState?.validate() ?? false) {
-                            String content = contentController.text;
-                            String locate = locateController.text;
-                            DatabaseService().saveUserData(
-                              uid: uidUser,
-                              name: nameUser,
-                              email: emailUser,
-                              content: content,
-                              locate: locate,
-                            );
-                            contentController.clear();
-                            locateController.clear();
-                            Navigator.pop(context);
-                          }
-                        },
-                        child: Text("Save"),
-                      ),
-                    ],
-                  ),
-                ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // Provide a unique document ID here, such as a generated UID or any other ID
+                  if (_formkey.currentState?.validate() ?? false) {
+                    final documentId = _auth.currentUser!.uid;
+                    _addContent(documentId);
+                    Navigator.pop(context);
+                  }
+                },
+                child: Text('Add Content'),
               ),
-            );
-          }
-          return SafeArea(
-            child: Container(
-              child: Text("Data not found"),
-            ),
-          );
-        },
+            ],
+          ),
+        ),
       ),
     );
   }

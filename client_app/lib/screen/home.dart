@@ -1,167 +1,139 @@
 import 'package:client_app/providers/database_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_launcher_icons/android.dart';
 
 import '../UI/add_content.dart';
 import '../UI/update_contents.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  late CollectionReference _contentsCollection;
-  List<QueryDocumentSnapshot> dataList = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _contentsCollection = _firestore.collection('contents');
-    fetchContents();
-  }
-
-  void fetchContents() async {
-    try {
-      QuerySnapshot querySnapshot = await _contentsCollection
-          .doc(_auth.currentUser?.uid) // Use the user's uid as the document ID
-          .collection('userContents')
-          .where('uid', isEqualTo: _auth.currentUser?.uid)
-          .orderBy('date', descending: true)
-          .limit(50)
-          .get();
-
-      setState(() {
-        dataList = querySnapshot.docs;
-      });
-    } catch (e) {
-      print('Error fetching contents: $e');
-    }
-  }
-
+class ContentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("List Contents"),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => AddContent()));
-            },
-            icon: Icon(Icons.add),
-          ),
-        ],
+        title: Text('Content List'),
+       
       ),
-      body: Container(
-        child: dataList.isEmpty
-            ? Center(
-                child: Text("No content on this page"),
-              )
-            : ListView.builder(
-                itemCount: dataList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  DocumentSnapshot snapshot = dataList[index];
-                  Map<String, dynamic> usermap =
-                      snapshot.data() as Map<String, dynamic>;
-
-                  return showDetail(usermap: usermap, documentId: snapshot.id);
-                },
-              ),
-      ),
+      body: ContentList(),
     );
   }
+}
 
-  Widget showDetail(
-      {required Map<String, dynamic> usermap, required String documentId}) {
-    final String content = usermap['content'] ?? '';
-    final String locate = usermap['locate'] ?? '';
-    final String name = usermap['name'] ?? '';
-    final String date = usermap['date'] ?? '';
-    print(content);
-    print(locate);
-    print(name);
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Container(
-        padding: EdgeInsets.all(10),
-        color: Colors.amber[400],
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              backgroundColor: Colors.black,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(1.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    content,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    locate,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    name,
-                    style:
-                        TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Text(
-                    date,
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                  ),
-                ],
-              ),
-            ),
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => UpdateContent(
-                        datas: usermap,
-                        documentId: documentId,
-                      ),
-                    ),
+class ContentList extends StatelessWidget {
+  final ContentService _service = ContentService();
+
+  void removeContent(String uid, String docid) {
+    // FirebaseFirestore.instance
+    //     .collection('contents')
+    //     .doc(uid)
+    //     .collection('contentUser')
+    //     .doc(docid)
+    //     .delete();
+    _service.removeContent(uid, docid);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _service.getContentListStream(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        final contentDocs = snapshot.data!.docs;
+        // if (contentDocs.isEmpty) {
+        //   return Center(
+        //     child: Text('No content'),
+        //   );
+        // }
+
+        return ListView.builder(
+          itemCount: contentDocs.length,
+          itemBuilder: (context, index) {
+            final contentDoc = contentDocs[index];
+            final contentUserCollection =
+                contentDoc.reference.collection('contentUser');
+            return StreamBuilder<QuerySnapshot>(
+              stream: contentUserCollection.snapshots(),
+              builder: (context, contentUserSnapshot) {
+                if (contentUserSnapshot.hasError) {
+                  return ListTile(
+                      title: Text('Error: ${contentUserSnapshot.error}'));
+                }
+
+                if (!contentUserSnapshot.hasData) {
+                  return ListTile(title: Text('Loading...'));
+                }
+
+                final contentUserDocs = contentUserSnapshot.data!.docs;
+
+                if (contentUserDocs.isEmpty) {
+                  return Container(
+                    height: MediaQuery.of(context).size.height / 1.4,
+                    alignment: Alignment.center,
+                    child: Text('No content'),
                   );
-                  },
-                  icon: Icon(Icons.edit),
-                ),
-                IconButton(
-                  onPressed: () {
-                    DatabaseService().removeUserData(
-                        uid: _auth.currentUser?.uid ?? '', docId: documentId);
-                    fetchContents();
-                  },
-                  icon: Icon(
-                    Icons.delete,
-                    color: Colors.red,
-                  ),
-                ),
-              ],
-            )
-          ],
-        ),
-      ),
+                }
+
+                final status = contentDoc['status'] as bool;
+                if (status != true) {
+                  return ListView.builder(
+                    itemCount: contentUserDocs.length,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, userIndex) {
+                      final contentUserData = contentUserDocs[userIndex].data()
+                          as Map<String, dynamic>;
+                      final content = contentUserData['contents'] as String;
+                      final locate = contentUserData['locate'] as String;
+
+                      final contentUserDocId = contentUserDocs[userIndex].id;
+                      final contentDocId = contentDoc.id;
+                      print(contentUserDocId);
+
+                      return Card(
+                        elevation: 2,
+                        margin:
+                            EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        child: Column(
+                          children: [
+                            ListTile(
+                              title: Text(content),
+                              subtitle: Text(locate),
+                            ),
+                            ButtonBar(
+                              alignment: MainAxisAlignment.end,
+                              children: [
+                                TextButton(
+                                  onPressed: () {
+                                   
+                                  },
+                                  child: Text('comment'),
+                                ),
+                                
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                }
+                return Center(
+                  child: Text('No rider content'),
+                );
+              },
+            );
+          },
+        );
+      },
     );
   }
 }

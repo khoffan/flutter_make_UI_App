@@ -2,7 +2,10 @@ import 'package:client_app/screen/chatpage.dart';
 import 'package:client_app/screen/homeResponder.dart';
 import 'package:flutter/material.dart';
 
+import '../screen/profileScreen.dart';
+import '../screen/qrCodeScanner.dart';
 import '../screen/serviceScreen.dart';
+import '../screen/wallet_screen.dart';
 import 'setting.dart';
 
 /// Flutter code sample for [BottomNavigationBar].
@@ -30,13 +33,10 @@ class _BottomNavigationBarState extends State<BottomNavigationBar> {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
-    HomeResponder(),
-
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
-    SettingUI()
+    ContentPageRider(),
+    WalletPage(),
+    QrscannerScreen(),
+    ProfileScreenApp(),
   ];
 
   void _onItemTapped(int index) {

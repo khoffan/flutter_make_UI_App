@@ -1,78 +1,68 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
 
-class DatabaseService {
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+class ContentService {
+   Stream<QuerySnapshot> getContentListStream() {
+    return FirebaseFirestore.instance.collection('contents').snapshots();
+  }
 
-  Future<Map<String, dynamic>> getUserData(String uid) async {
-    DocumentSnapshot snapshot =
-        await firestore.collection('contents').doc(uid).get();
-
-    if (snapshot.exists) {
-      Map<String, dynamic> userData = snapshot.data() as Map<String, dynamic>;
-      return userData;
-    } else {
-      return {};
+  Future<void> updateContent(String uid, String docid, Map<String, dynamic> data) async {
+    // Update content document in Firestore
+    try {
+      await FirebaseFirestore.instance
+          .collection('contents')
+          .doc(uid)
+          .collection('contentUser')
+          .doc(docid)
+          .update(data);
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+  Future<void> updateContentStatus(String uid, bool newStatus) async {
+    // Update content document in Firestore
+    try {
+      await FirebaseFirestore.instance
+          .collection('contents')
+          .doc(uid)
+          .update({'status': newStatus});
+    } catch (e) {
+      throw e.toString();
     }
   }
 
-  Future<void> saveUserData({
-    required String uid,
-    required String name,
-    required String email,
-    required String content,
-    required String locate,
-  }) async {
-    String currentTime = DateFormat("dd-MM-yyyy H:m:s").format(DateTime.now());
-
-    Map<String, dynamic> userData = {
-      'uid': uid,
-      'name': name,
-      'email': email,
-      'content': content,
-      'locate': locate,
-      'date': currentTime,
-      // Add any other data you want to save.
-    };
-
-    await firestore
-        .collection('contents')
-        .doc(uid)
-        .collection('userContents')
-        .add(userData);
-    print("Data successfully saved!");
+  Future<void> removeContent(String uid, String docid) async {
+    // Remove content document from Firestore
+    try {
+      await FirebaseFirestore.instance
+          .collection('contents')
+          .doc(uid)
+          .collection('contentUser')
+          .doc(docid)
+          .delete();
+    } catch (e) {
+      throw e.toString();
+    }
   }
 
-  Future<void> updateUserData({
-    required String uid,
-    required String docId,
-    required String content,
-    required String locate,
-  }) async {
-    await firestore
-        .collection('contents')
-        .doc(uid)
-        .collection('userContents')
-        .doc(docId)
-        .update({
-      'content': content,
-      'locate': locate,
-    });
-
-    print("Data successfully updated!");
+  Future<void> saveContent(String uid, Map<String, dynamic> contentData) async {
+    // Save new content document to Firestore
+    try {
+      await FirebaseFirestore.instance
+          .collection('contents')
+          .doc(uid)
+          .collection('contentUser')
+          .add(contentData);
+    } catch (e) {
+      throw e.toString();
+    }
   }
 
-  Future<void> removeUserData({
-    required String uid,
-    required String docId,
-  }) async {
-    await firestore
+  Stream<QuerySnapshot> getContentListStreamWithStatus() {
+    return FirebaseFirestore.instance
         .collection('contents')
-        .doc(uid)
-        .collection('userContents')
-        .doc(docId)
-        .delete();
-
-    print("Data successfully removed!");
+        .orderBy('status', descending: true) // Adjust sorting as needed
+        .snapshots();
   }
+
+  getContentList() {}
 }
