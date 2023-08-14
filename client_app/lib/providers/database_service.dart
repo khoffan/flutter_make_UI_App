@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ContentService {
-   Stream<QuerySnapshot> getContentListStream() {
+  Stream<QuerySnapshot> getContentListStream() {
     return FirebaseFirestore.instance.collection('contents').snapshots();
   }
 
-  Future<void> updateContent(String uid, String docid, Map<String, dynamic> data) async {
+  Future<void> updateContent(
+      String uid, String docid, Map<String, dynamic> data) async {
     // Update content document in Firestore
     try {
       await FirebaseFirestore.instance
@@ -18,6 +19,7 @@ class ContentService {
       throw e.toString();
     }
   }
+
   Future<void> updateContentStatus(String uid, bool newStatus) async {
     // Update content document in Firestore
     try {
@@ -47,11 +49,50 @@ class ContentService {
   Future<void> saveContent(String uid, Map<String, dynamic> contentData) async {
     // Save new content document to Firestore
     try {
+      final status = await getStatus(uid);
+
       await FirebaseFirestore.instance
           .collection('contents')
           .doc(uid)
-          .collection('contentUser')
-          .add(contentData);
+          .set({
+        'status': status, // Add the status field
+      });
+
+      final contentDocRef = FirebaseFirestore.instance
+          .collection('contents')
+          .doc(uid);
+      await contentDocRef.collection('contentUser').add(contentData);
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
+  Future<void> setSataus(bool status, String uid) async {
+    try {
+      if (uid != null && status != null) {
+        await FirebaseFirestore.instance.collection('contents').doc(uid).set({
+          'status': status, // Add the status field
+        });
+      }
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
+  Future<bool?> getStatus(String uid) async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+          .instance
+          .collection('contents')
+          .doc(uid)
+          .get();
+
+      if (snapshot.exists) {
+        Map<String, dynamic> data = snapshot.data()!;
+        return data['status'] as bool?;
+      } else {
+        return null; // Document not found
+      }
     } catch (e) {
       throw e.toString();
     }

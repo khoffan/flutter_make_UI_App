@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
-import 'homeResponder.dart';
+import '../UI/btnavigate.dart';
+import '../UI/btnavigater_responder.dart';
 import 'showUser.dart';
 
 class LoadingScreen extends StatefulWidget {
@@ -37,20 +38,20 @@ class _LoadingScreenState extends State<LoadingScreen> {
               if (document != null && document.exists) {
                 Map<String, dynamic> data =
                     document.data() as Map<String, dynamic>;
-                if (data != null) {
+                if (data != '') {
                   bool? status = data['status'];
                   if (status == true) {
                     SchedulerBinding.instance.addPostFrameCallback((_) {
                       Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (_) => Myhome()),
+                        MaterialPageRoute(builder: (_) => BottomNavigationBarAppRequester()),
                       );
                     });
                     print(status);
-                  } else if (status == false) {
+                  } else{
                     SchedulerBinding.instance.addPostFrameCallback((_) {
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
-                          builder: (_) => ContentPageRider(),
+                          builder: (_) => BottomNavigationBarAppResponder(),
                         ),
                       );
                     });

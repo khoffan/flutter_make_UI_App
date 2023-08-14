@@ -1,7 +1,9 @@
 import 'package:client_app/providers/database_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_launcher_icons/android.dart';
+import 'package:intl/intl.dart';
 
 import '../UI/add_content.dart';
 import '../UI/update_contents.dart';
@@ -11,8 +13,7 @@ class ContentPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Content List'),
-       
+        title: Text('Content List rider'),
       ),
       body: ContentList(),
     );
@@ -21,7 +22,7 @@ class ContentPage extends StatelessWidget {
 
 class ContentList extends StatelessWidget {
   final ContentService _service = ContentService();
-
+  FirebaseAuth _auth = FirebaseAuth.instance;
   void removeContent(String uid, String docid) {
     // FirebaseFirestore.instance
     //     .collection('contents')
@@ -73,62 +74,77 @@ class ContentList extends StatelessWidget {
                 }
 
                 final contentUserDocs = contentUserSnapshot.data!.docs;
+                if (_auth.currentUser!.uid != contentDoc.id) {
+                  final status = contentDoc['status'] as bool;
+                  print("status ${status}");
+                  if (status != true && contentUserDocs.isNotEmpty) {
+                    print('uid ${_auth.currentUser!.uid}');
+                    return ListView.builder(
+                      itemCount: contentUserDocs.length,
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, userIndex) {
+                        final contentUserData = contentUserDocs[userIndex]
+                            .data() as Map<String, dynamic>;
+                        final content = contentUserData['contents'] as String;
+                        final locate = contentUserData['locate'] as String;
+                        final name = contentUserData['name'] as String;
+                        final date = contentUserData['date'] as Timestamp;
+                        final dateTime = date.toDate();
+                        final formattedDate =
+                            DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
 
-                if (contentUserDocs.isEmpty) {
-                  return Container(
-                    height: MediaQuery.of(context).size.height / 1.4,
-                    alignment: Alignment.center,
-                    child: Text('No content'),
-                  );
-                }
+                        final contentUserDocId = contentUserDocs[userIndex].id;
+                        final contentDocId = contentDoc.id;
 
-                final status = contentDoc['status'] as bool;
-                if (status != true) {
-                  return ListView.builder(
-                    itemCount: contentUserDocs.length,
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, userIndex) {
-                      final contentUserData = contentUserDocs[userIndex].data()
-                          as Map<String, dynamic>;
-                      final content = contentUserData['contents'] as String;
-                      final locate = contentUserData['locate'] as String;
-
-                      final contentUserDocId = contentUserDocs[userIndex].id;
-                      final contentDocId = contentDoc.id;
-                      print(contentUserDocId);
-
-                      return Card(
-                        elevation: 2,
-                        margin:
-                            EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        child: Column(
-                          children: [
-                            ListTile(
-                              title: Text(content),
-                              subtitle: Text(locate),
-                            ),
-                            ButtonBar(
-                              alignment: MainAxisAlignment.end,
-                              children: [
-                                TextButton(
-                                  onPressed: () {
-                                   
-                                  },
-                                  child: Text('comment'),
+                        return Card(
+                          elevation: 2,
+                          margin:
+                              EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          child: Column(
+                            children: [
+                              ListTile(
+                                title: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(content),
+                                    Text(locate),
+                                  ],
                                 ),
-                                
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
+                                subtitle: Row(
+                                  children: [
+                                    Text(name),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    Text(formattedDate),
+                                  ],
+                                ),
+                              ),
+                              ButtonBar(
+                                alignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {},
+                                    child: Text('comment'),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  } else {
+                    return Container(
+                      height: MediaQuery.of(context).size.height / 1.4,
+                      alignment: Alignment.center,
+                      child: Text('No content'),
+                    );
+                  }
+                } else {
+                  return Container();
                 }
-                return Center(
-                  child: Text('No rider content'),
-                );
               },
             );
           },

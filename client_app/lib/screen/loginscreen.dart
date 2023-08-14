@@ -10,6 +10,7 @@ import '../UI/btnavigate.dart';
 // import '../providers/user_provider.dart';
 import '../models/register.dart';
 import '../providers/auth_user.dart';
+import '../providers/database_service.dart';
 import '../providers/user_provider.dart';
 import 'registerScreen.dart';
 
@@ -28,6 +29,14 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController passwordController = TextEditingController();
 
   final Future<FirebaseApp> firebase = Firebase.initializeApp();
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  String uid = '';
+
+  @override
+  void initState(){
+    super.initState();
+    uid = _auth.currentUser?.uid ?? '';
+  }
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -155,6 +164,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                               false) {
                                             formKey.currentState?.save();
                                             await Users.setLogin(true);
+                        
+                                            await ContentService().setSataus(true,uid);
+                                            
                                             try {
                                               await AuthUsers()
                                                   .signInwithEmailpassword(

@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:client_app/providers/auth_user.dart';
+import 'package:client_app/providers/database_service.dart';
 import 'package:client_app/providers/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -213,6 +214,7 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
                       child: ElevatedButton(
                         onPressed: () async {
                           await Users.setLogin(false);
+                          await ContentService().setSataus(true,_auth.currentUser!.uid);
                           await AuthUsers().signOut(context);
                         },
                         child: Text("Sign Out"),
