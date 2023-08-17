@@ -1,16 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 import '../UI/add_content.dart';
 import '../UI/update_contents.dart';
-
 
 class ContentPageRider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Content List'),
+        title: Text('Content List Rider'),
         actions: [
           IconButton(
               onPressed: () {
@@ -30,6 +31,7 @@ class ContentPageRider extends StatelessWidget {
 }
 
 class ContentList extends StatelessWidget {
+  FirebaseAuth _auth = FirebaseAuth.instance;
   void removeContent(String uid, String docid) {
     FirebaseFirestore.instance
         .collection('contents')
@@ -41,6 +43,7 @@ class ContentList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final specificPersonUid = _auth.currentUser?.uid ?? '';
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('contents').snapshots(),
       builder: (context, snapshot) {
@@ -56,16 +59,20 @@ class ContentList extends StatelessWidget {
 
         final contentDocs = snapshot.data!.docs;
 
-        // if (contentDocs.isEmpty) {
-        //   return Center(
-        //     child: Text('No content'),
-        //   );
-        // }
+        final filteredContentDocs = contentDocs
+            .where((contentDoc) =>
+                contentDoc.id ==
+                specificPersonUid) // Filter content for specific person
+            .toList();
+
+        if (filteredContentDocs.isEmpty) {
+          return Center(child: Text('No content for this person.'));
+        }
 
         return ListView.builder(
-          itemCount: contentDocs.length,
+          itemCount: filteredContentDocs.length,
           itemBuilder: (context, index) {
-            final contentDoc = contentDocs[index];
+            final contentDoc = filteredContentDocs[index];
             final contentUserCollection =
                 contentDoc.reference.collection('contentUser');
 
@@ -85,7 +92,7 @@ class ContentList extends StatelessWidget {
 
                 if (contentUserDocs.isEmpty) {
                   return Container(
-                    height: MediaQuery.of(context).size.height/1.4,
+                    height: MediaQuery.of(context).size.height / 1.4,
                     alignment: Alignment.center,
                     child: Text('No content'),
                   );
@@ -100,6 +107,11 @@ class ContentList extends StatelessWidget {
                         as Map<String, dynamic>;
                     final content = contentUserData['contents'] as String;
                     final locate = contentUserData['locate'] as String;
+                    final name = contentUserData['name'] as String;
+                    final date = contentUserData['date'] as Timestamp;
+                    final dateTime = date.toDate();
+                    final formattedDate =
+                        DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
                     final contentUserDocId = contentUserDocs[userIndex].id;
                     final contentDocId = contentDoc.id;
                     print(contentUserDocId);
@@ -110,8 +122,20 @@ class ContentList extends StatelessWidget {
                       child: Column(
                         children: [
                           ListTile(
-                            title: Text(content),
-                            subtitle: Text(locate),
+                            title: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(content),
+                                Text(locate),
+                              ],
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(name),
+                                Text(formattedDate),
+                              ],
+                            ),
                           ),
                           ButtonBar(
                             alignment: MainAxisAlignment.end,

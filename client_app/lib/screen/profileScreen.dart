@@ -214,7 +214,7 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
                       child: ElevatedButton(
                         onPressed: () async {
                           await Users.setLogin(false);
-                          await ContentService().setSataus(true,_auth.currentUser!.uid);
+                          
                           await AuthUsers().signOut(context);
                         },
                         child: Text("Sign Out"),

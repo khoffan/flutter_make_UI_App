@@ -164,8 +164,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                               false) {
                                             formKey.currentState?.save();
                                             await Users.setLogin(true);
-                        
-                                            await ContentService().setSataus(true,uid);
                                             
                                             try {
                                               await AuthUsers()
