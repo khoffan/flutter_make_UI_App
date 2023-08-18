@@ -2,6 +2,7 @@
 import 'package:client_app/screen/homeResponder.dart';
 import 'package:client_app/screen/wallet_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../screen/home.dart';
 import '../screen/qrCodeScanner.dart';
@@ -109,7 +110,8 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.chat,
+                            FaIcon(FontAwesomeIcons.bank,
+                                size: 20,
                                 color: _selectedIndex == 1
                                     ? Colors.green
                                     : Colors.grey),
