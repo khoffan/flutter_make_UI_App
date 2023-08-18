@@ -71,10 +71,10 @@ class ContentList extends StatelessWidget {
                 final contentUserDocs = contentUserSnapshot.data!.docs;
 
                 final status = contentDoc['status'] as bool;
-                print("content doc id ${contentDoc.id} ");
-                print("status ${status}");
+                // print("content doc id ${contentDoc.id} ");
+                // print("status ${status}");
                 if (status != true && contentUserDocs.isNotEmpty) {
-                  print('uid ${_auth.currentUser!.uid}');
+                  // print('uid ${_auth.currentUser!.uid}');
                   return ListView.builder(
                     itemCount: contentUserDocs.length,
                     shrinkWrap: true,
@@ -82,13 +82,13 @@ class ContentList extends StatelessWidget {
                     itemBuilder: (context, userIndex) {
                       final contentUserData = contentUserDocs[userIndex].data()
                           as Map<String, dynamic>;
-                      final content = contentUserData['contents'] as String;
-                      final locate = contentUserData['locate'] as String;
-                      final name = contentUserData['name'] as String;
+                      final content = contentUserData['contents'] as String ?? '';
+                      final locate = contentUserData['locate'] as String ?? '';
+                      final name = contentUserData['name'] as String ?? '';
                       final date = contentUserData['date'] as Timestamp;
                       final dateTime = date.toDate();
                       final formattedDate =
-                          DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
+                          DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime) ?? '';
 
                       final contentUserDocId = contentUserDocs[userIndex].id;
                       final contentDocId = contentDoc.id;

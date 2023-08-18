@@ -1,6 +1,8 @@
 // import 'dart:typed_data';
 import 'dart:async';
+import 'dart:typed_data';
 
+import 'package:client_app/models/utils.dart';
 import 'package:client_app/providers/auth_user.dart';
 import 'package:client_app/providers/database_service.dart';
 import 'package:client_app/providers/user_provider.dart';
@@ -8,8 +10,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
-import 'edirProfile.dart';
+import '../UI/edirProfile.dart';
+import '../UI/update_profile.dart';
 
 class ProfileScreenApp extends StatefulWidget {
   const ProfileScreenApp({super.key});
@@ -106,10 +110,15 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
                           Stack(
                             alignment: AlignmentDirectional.bottomCenter,
                             children: [
-                              CircleAvatar(
-                                radius: 64,
-                                backgroundImage: NetworkImage(image),
-                              ),
+                               image.isNotEmpty
+                                ? CircleAvatar(
+                                    radius: 64,
+                                    backgroundImage: NetworkImage(image),
+                                  )
+                                : CircleAvatar(
+                                    radius: 64,
+                                    backgroundImage: AssetImage('assets/userpersonal.png') // Replace with your placeholder image asset
+                                  ),
                             ],
                           ),
                           SizedBox(
@@ -126,11 +135,17 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
                                         CrossAxisAlignment.center,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text("name : " + name.toString(), style: optionStyle,),
+                                      Text(
+                                        "name : " + name.toString(),
+                                        style: optionStyle,
+                                      ),
                                       SizedBox(
                                         width: 10,
                                       ),
-                                      Text("dorm: " + dorm.toString(), style: optionStyle,),
+                                      Text(
+                                        "dorm: " + dorm.toString(),
+                                        style: optionStyle,
+                                      ),
                                       SizedBox(
                                         width: 10,
                                       ),
@@ -141,28 +156,57 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
                                         CrossAxisAlignment.center,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text("room: " + room.toString(), style: optionStyle,),
+                                      Text(
+                                        "room: " + room.toString(),
+                                        style: optionStyle,
+                                      ),
                                       SizedBox(
                                         width: 10,
                                       ),
-                                      Text("StudentId: " + std.toString(), style: optionStyle,),
+                                      Text(
+                                        "StudentId: " + std.toString(),
+                                        style: optionStyle,
+                                      ),
                                     ],
                                   ),
-                                  SizedBox(height: 20,),
-                                  Center(
-                                    child: SizedBox(
-                                      width: 200,
-                                      child: ElevatedButton(
-                                        onPressed: () async {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    EditProfile()),
-                                          );
-                                        },
-                                        child: Text("Edit profile"),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Container(
+                                        child: SizedBox(
+                                          width: 100,
+                                          child: ElevatedButton(
+                                            onPressed: () async {
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        EditProfile()),
+                                              );
+                                            },
+                                            child: Text("Edit profile"),
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                      Container(
+                                        child: SizedBox(
+                                          width: 100,
+                                          child: ElevatedButton(
+                                            onPressed: () async {
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        UpdateProfile(stdid: std, room: room, dorm: dorm,)),
+                                              );
+                                            },
+                                            child: Text("update profile"),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -214,7 +258,6 @@ class _ProfileScreenAppState extends State<ProfileScreenApp> {
                       child: ElevatedButton(
                         onPressed: () async {
                           await Users.setLogin(false);
-                          
                           await AuthUsers().signOut(context);
                         },
                         child: Text("Sign Out"),

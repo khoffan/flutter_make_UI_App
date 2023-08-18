@@ -35,14 +35,30 @@ class _EditProfileState extends State<EditProfile> {
     if(_image == null){
       return;
     }
-
+    try{
     await AddProfile().saveProfile(std: std, room: room, file: _image!, dorm: drom);
     dormController.clear();
     roomController.clear();
     stdController.clear();
     Navigator.of(context)
-        .pop();
+        .pop(); 
+    }
+    catch(e){
+      throw e.toString();
+    }
   }
+
+  // void updateProfile(String std, String drom, String room ) async{
+  //   if(_image == null){
+  //     return;
+  //   }
+  //   await AddProfile().updateProfile(dorm: drom, room: room ,stdId: std);
+  //   dormController.clear();
+  //   roomController.clear();
+  //   stdController.clear();
+  //   Navigator.of(context)
+  //       .pop();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -73,15 +89,14 @@ class _EditProfileState extends State<EditProfile> {
                         alignment: AlignmentDirectional.bottomCenter,
                         children: [
                           _image != null
-                              ? CircleAvatar(
-                                  radius: 64,
-                                  backgroundImage: MemoryImage(_image!),
-                                )
-                              : CircleAvatar(
-                                  radius: 64,
-                                  backgroundImage: NetworkImage(
-                                      'https://www.google.com/imgres?imgurl=https%3A%2F%2Fw7.pngwing.com%2Fpngs%2F205%2F731%2Fpng-transparent-default-avatar-thumbnail.png&tbnid=vj1POnmqwlZL-M&vet=12ahUKEwiv1vzRpZqAAxX-0qACHdgLBcgQMygCegUIARDlAQ..i&imgrefurl=https%3A%2F%2Fwww.pngwing.com%2Fen%2Fsearch%3Fq%3Ddefault&docid=J354HYBi_egj6M&w=360&h=360&q=default%20avatar%20in%20png&hl=en&ved=2ahUKEwiv1vzRpZqAAxX-0qACHdgLBcgQMygCegUIARDlAQ'),
-                                ),
+                                ? CircleAvatar(
+                                    radius: 64,
+                                    backgroundImage: MemoryImage(_image!),
+                                  )
+                                : CircleAvatar(
+                                    radius: 64,
+                                    backgroundImage: AssetImage('assets/userpersonal.png') // Replace with your placeholder image asset
+                                  ),
                           Positioned(
                             child: IconButton(
                               onPressed: () {
@@ -121,9 +136,9 @@ class _EditProfileState extends State<EditProfile> {
                                 String dorm = dormController.text;
                                 String std = stdController.text;
                                 String room = roomController.text;
-
-                                saveFile(std, room,dorm);
-
+                                // updateProfile(std, dorm, room);
+                                saveFile(std, room, dorm);
+                        
                                 _formKey.currentState?.reset();
                               }
                             },
