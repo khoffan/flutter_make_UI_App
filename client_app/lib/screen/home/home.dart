@@ -5,8 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_launcher_icons/android.dart';
 import 'package:intl/intl.dart';
 
-import '../UI/add_content.dart';
-import '../UI/update_contents.dart';
+import '../../UI/add_content.dart';
+import '../../UI/update_contents.dart';
 
 class ContentPage extends StatelessWidget {
   @override

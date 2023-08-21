@@ -1,15 +1,12 @@
-
-import 'package:client_app/screen/homeResponder.dart';
-import 'package:client_app/screen/wallet_screen.dart';
+import 'package:client_app/screen/home/homeResponder.dart';
+import 'package:client_app/screen/wallet/wallet_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../screen/home.dart';
-import '../screen/qrCodeScanner.dart';
-import '../screen/serviceScreen.dart';
-import '../screen/profileScreen.dart';
-
-
+import '../screen/home/home.dart';
+import '../screen/qrcode/qrCodeScanner.dart';
+import '../screen/service/serviceScreen.dart';
+import '../screen/profile/profileScreen.dart';
 
 /// Flutter code sample for [BottomNavigationBar].
 class BottomNavigationBarAppRequester extends StatelessWidget {
@@ -28,8 +25,6 @@ class BottomNavigationBarAppRequester extends StatelessWidget {
 class BottomNavigationBarScreen extends StatefulWidget {
   const BottomNavigationBarScreen({super.key});
 
-
-
   @override
   State<BottomNavigationBarScreen> createState() =>
       _BottomNavigationBarScreenState();
@@ -39,6 +34,8 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   int _selectedIndex = 0;
   // static const TextStyle optionStyle =
   //     TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
+  PageController _pageController = PageController(initialPage: 0);
+
   static List<Widget> _widgetOptions = <Widget>[
     ContentPage(),
     WalletPage(),
@@ -52,14 +49,31 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
     }
     setState(() {
       _selectedIndex = index;
+      _pageController.animateToPage(
+        index,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-          child: _widgetOptions.elementAt(_selectedIndex),
+        body: PageView(
+          controller: _pageController,
+          children: _widgetOptions,
+          onPageChanged: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
         ),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),

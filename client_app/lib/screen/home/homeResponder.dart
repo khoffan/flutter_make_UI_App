@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
-import '../UI/add_content.dart';
-import '../UI/update_contents.dart';
+import '../../UI/add_content.dart';
+import '../../UI/update_contents.dart';
 
 class ContentPageRider extends StatelessWidget {
   @override

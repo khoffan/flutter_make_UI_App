@@ -3,6 +3,8 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 
+import 'tranfer_screen.dart';
+
 class WalletPage extends StatefulWidget {
   const WalletPage({super.key});
 
@@ -18,7 +20,6 @@ class _WalletPageState extends State<WalletPage> {
     return Scaffold(
       backgroundColor: Colors.pink[100],
       body: SafeArea(
-        
         child: Container(
           alignment: Alignment.center,
           padding: const EdgeInsets.all(10),
@@ -109,18 +110,18 @@ class _WalletPageState extends State<WalletPage> {
               Expanded(
                 flex: 4,
                 child: Container(
-                  
                   child: Column(
-                    
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(height: 20,),
+                      SizedBox(
+                        height: 20,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          _buildComponent('โอนเงิน'),
-                          _buildComponent('เติมเงิน'),
-                          _buildComponent('บัญชี'),
+                          _buildComponent(context,'โอนเงิน'),
+                          _buildComponent(context,'เติมเงิน'),
+                          _buildComponent(context,'บัญชี'),
                         ],
                       ),
                       SizedBox(
@@ -129,9 +130,9 @@ class _WalletPageState extends State<WalletPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          _buildComponent('รายการ'),
-                          _buildComponent('ถอนเงิน'),
-                          _buildComponent('ตั่งค่า'),
+                          _buildComponent(context,'สแกน'),
+                          _buildComponent(context,'ถอนเงิน'),
+                          _buildComponent(context,'ตั่งค่า'),
                         ],
                       ),
                     ],
@@ -146,30 +147,41 @@ class _WalletPageState extends State<WalletPage> {
   }
 }
 
-Widget _buildComponent(String title) {
+Widget _buildComponent(context, String title) {
   if (title == "โอนเงิน") {
-    return Column(children: [
-      Padding(padding: EdgeInsetsDirectional.only()),
-      // Monday
-      CircleAvatar(
-        radius: 30,
-        backgroundColor: Colors.white,
-        child: ClipOval(
-            child: Image.asset(
-              'assets/transfer.png',
-              width: 40, // Customize the width of the image
-              height: 40, // Customize the height of the image
-              fit: BoxFit.cover,
-              color: Colors.blue,
- // Adjust how the image fills the ClipOval
+    return Column(
+      children: [
+        Padding(padding: EdgeInsetsDirectional.only()),
+        // Monday
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => TransferScreen(),
+              ),
+            );
+          },
+          child: CircleAvatar(
+            radius: 30,
+            backgroundColor: Colors.white,
+            child: ClipOval(
+              child: Image.asset(
+                'assets/transfer.png',
+                width: 40, // Customize the width of the image
+                height: 40, // Customize the height of the image
+                fit: BoxFit.cover,
+                color: Colors.blue,
+                // Adjust how the image fills the ClipOval
+              ),
             ),
           ),
-      ),
-      SizedBox(
-        height: 10,
-      ),
-      Text(title)
-    ]);
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Text(title)
+      ],
+    );
   }
   if (title == "เติมเงิน") {
     return Column(children: [
@@ -179,14 +191,14 @@ Widget _buildComponent(String title) {
         radius: 30,
         backgroundColor: Colors.white,
         child: ClipOval(
-            child: Image.asset(
-              'assets/dollar.png',
-              width: 40, // Customize the width of the image
-              height: 40, // Customize the height of the image
-              fit: BoxFit.cover,
+          child: Image.asset(
+            'assets/dollar.png',
+            width: 40, // Customize the width of the image
+            height: 40, // Customize the height of the image
+            fit: BoxFit.cover,
 // Adjust how the image fills the ClipOval
-            ),
           ),
+        ),
       ),
       SizedBox(
         height: 10,
@@ -202,13 +214,13 @@ Widget _buildComponent(String title) {
         radius: 30,
         backgroundColor: Colors.white,
         child: ClipOval(
-            child: Image.asset(
-              'assets/folder.png',
-              width: 40, // Customize the width of the image
-              height: 40, // Customize the height of the image
-              fit: BoxFit.cover, // Adjust how the image fills the ClipOval
-            ),
+          child: Image.asset(
+            'assets/folder.png',
+            width: 40, // Customize the width of the image
+            height: 40, // Customize the height of the image
+            fit: BoxFit.cover, // Adjust how the image fills the ClipOval
           ),
+        ),
       ),
       SizedBox(
         height: 10,
@@ -216,22 +228,14 @@ Widget _buildComponent(String title) {
       Text(title)
     ]);
   }
-  if (title == "รายการ") {
+  if (title == "สแกน") {
     return Column(children: [
       Padding(padding: EdgeInsetsDirectional.only()),
       // Monday
       CircleAvatar(
         radius: 30,
         backgroundColor: Colors.white,
-        child: ClipOval(
-            child: Image.asset(
-              'assets/check-list.png',
-              width: 40, // Customize the width of the image
-              height: 40, // Customize the height of the image
-              // fit: BoxFit.cover,
-// Adjust how the image fills the ClipOval
-            ),
-          ),
+        child: Icon(Icons.qr_code_scanner_rounded),
       ),
       SizedBox(
         height: 10,

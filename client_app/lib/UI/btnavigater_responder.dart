@@ -1,11 +1,11 @@
-import 'package:client_app/screen/chatpage.dart';
-import 'package:client_app/screen/homeResponder.dart';
+import 'package:client_app/screen/chatFunction/chatpage.dart';
+import 'package:client_app/screen/home/homeResponder.dart';
 import 'package:flutter/material.dart';
 
-import '../screen/profileScreen.dart';
-import '../screen/qrCodeScanner.dart';
-import '../screen/serviceScreen.dart';
-import '../screen/wallet_screen.dart';
+import '../screen/profile/profileScreen.dart';
+import '../screen/qrcode/qrCodeScanner.dart';
+import '../screen/service/serviceScreen.dart';
+import '../screen/wallet/wallet_screen.dart';
 import 'setting.dart';
 
 /// Flutter code sample for [BottomNavigationBar].

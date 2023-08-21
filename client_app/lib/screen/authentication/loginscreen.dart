@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 // import 'package:http/http.dart' as http;
-import '../UI/btnavigate.dart';
+import '../../UI/btnavigate.dart';
 // import '../providers/user_provider.dart';
-import '../models/register.dart';
-import '../providers/auth_user.dart';
-import '../providers/database_service.dart';
-import '../providers/user_provider.dart';
+import '../../models/register.dart';
+import '../../providers/auth_user.dart';
+import '../../providers/database_service.dart';
+import '../../providers/user_provider.dart';
 import 'registerScreen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -50,6 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
           }
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
+              
               backgroundColor: Color.fromARGB(255, 255, 255, 255),
               body: Container(
                 height: MediaQuery.of(context)

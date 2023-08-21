@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../screen/loginscreen.dart';
+import '../screen/authentication/loginscreen.dart';
 import '../models/add_users.dart';
 
 class AuthUsers {

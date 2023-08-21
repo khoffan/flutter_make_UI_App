@@ -2,7 +2,7 @@ import 'package:client_app/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 
 import '../UI/btnavigate.dart';
-import '../screen/loginscreen.dart';
+import '../screen/authentication/loginscreen.dart';
 
 
 class checkLogin extends StatefulWidget {

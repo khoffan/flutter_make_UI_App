@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
-import '../UI/btnavigate.dart';
-import '../UI/btnavigater_responder.dart';
+import '../../UI/btnavigate.dart';
+import '../../UI/btnavigater_responder.dart';
 import 'showUser.dart';
 
 class LoadingScreen extends StatefulWidget {

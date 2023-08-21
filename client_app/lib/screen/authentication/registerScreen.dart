@@ -1,5 +1,5 @@
 import 'package:client_app/providers/auth_user.dart';
-import 'package:client_app/screen/loginscreen.dart';
+import 'package:client_app/screen/authentication/loginscreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,7 +10,7 @@ import 'dart:async';
 
 // import 'dart:io';
 
-import '../models/register.dart';
+import '../../models/register.dart';
 
 // import 'loginscreen.dart';
 

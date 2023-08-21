@@ -2,10 +2,10 @@ import 'package:client_app/providers/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../UI/dropdown.dart';
-import '../providers/auth_user.dart';
+import '../../UI/dropdown.dart';
+import '../../providers/auth_user.dart';
 
-import 'loadingScreen.dart';
+import '../navigate/loadingScreen.dart';
 
 class ServiceScreen extends StatefulWidget {
   const ServiceScreen({super.key});

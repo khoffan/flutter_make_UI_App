@@ -12,8 +12,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../UI/edirProfile.dart';
-import '../UI/update_profile.dart';
+import '../../UI/edirProfile.dart';
+import '../../UI/update_profile.dart';
 
 class ProfileScreenApp extends StatefulWidget {
   const ProfileScreenApp({super.key});
