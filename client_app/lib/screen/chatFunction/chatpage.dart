@@ -1,9 +1,14 @@
+import 'dart:io';
+
 import 'package:client_app/UI/chat_bouble.dart';
+import 'package:client_app/models/utils.dart';
 import 'package:client_app/providers/chat_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:linkify/linkify.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen(
@@ -26,6 +31,19 @@ class _ChatScreenState extends State<ChatScreen> {
       await _chatService.sendMessage(
           widget.reciveUseruid, _messageController.text);
       _messageController.clear();
+    }
+  }
+
+  void sendImage() async {
+    final picker = ImagePicker();
+    final pickerImg = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickerImg != null) {
+      final imageFile = File(pickerImg!.path);
+
+      final imageUrl = await _chatService.uploadImage(imageFile);
+
+      await _chatService.sendMessage(widget.reciveUseruid, '', imageUrl);
     }
   }
 
@@ -121,7 +139,17 @@ class _ChatScreenState extends State<ChatScreen> {
             SizedBox(
               height: 10,
             ),
-            ChatBouble(message: data['message'])
+            if (data['message'] != null &&
+                data['message'].toString().isNotEmpty)
+              ChatBouble(message: data['message'])
+            else if (data.containsKey('imageLink'))
+              Image.network(
+                data['imageLink'],
+                fit: BoxFit.cover,
+                width: 150,
+                height: 150,
+              ),
+            Container(), // Display the image
           ],
         ),
       ),
@@ -141,11 +169,16 @@ class _ChatScreenState extends State<ChatScreen> {
               child: TextFormField(
                 obscureText: false,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  hintText: "Enter message",
-                ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    hintText: "Enter message",
+                    icon: IconButton(
+                      onPressed: () {
+                        sendImage();
+                      },
+                      icon: Icon(Icons.image),
+                    )),
                 controller: _messageController,
               ),
             ),

@@ -2,6 +2,7 @@ import 'package:client_app/screen/chatFunction/chatpage.dart';
 import 'package:client_app/screen/home/homeResponder.dart';
 import 'package:flutter/material.dart';
 
+import '../screen/navigate/showUser.dart';
 import '../screen/profile/profileScreen.dart';
 import '../screen/qrcode/qrCodeScanner.dart';
 import '../screen/service/serviceScreen.dart';
@@ -35,7 +36,7 @@ class _BottomNavigationBarState extends State<BottomNavigationBar> {
   static List<Widget> _widgetOptions = <Widget>[
     ContentPageRider(),
     WalletPage(),
-    QrscannerScreen(),
+    Myhome(),
     ProfileScreenApp(),
   ];
 

@@ -7,13 +7,15 @@ class Messages {
   final String? senderEmail;
   final String? reciveId;
   final String? message;
+  final String? imageLink;
   final Timestamp timeStemp;
 
   Messages({
     required this.senderId,
     required this.senderEmail,
     required this.reciveId,
-    required this.message,
+    this.message,
+    this.imageLink,
     required this.timeStemp,
   });
 
@@ -23,6 +25,7 @@ class Messages {
       'senderEmail': senderEmail,
       'reciveId': reciveId,
       'message': message,
+      'imageLink': imageLink,
       'timeStemp': timeStemp,
     };
   }
