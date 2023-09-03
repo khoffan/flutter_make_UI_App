@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import "package:image_picker/image_picker.dart";
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'qr_image.dart';
 
 class QrscannerScreen extends StatefulWidget {
   const QrscannerScreen({Key? key}) : super(key: key);
@@ -14,6 +17,8 @@ class QrscannerScreen extends StatefulWidget {
 }
 
 class _QrscannerScreenState extends State<QrscannerScreen> {
+  TextEditingController _title = TextEditingController();
+
   String? scannerResult;
   bool isCameroMode = true;
   bool hasResult = false;
@@ -29,22 +34,47 @@ class _QrscannerScreenState extends State<QrscannerScreen> {
           padding: EdgeInsets.all(10),
           child: Column(
             children: [
-              SizedBox(
-                width: double.infinity,
-                height: 200,
-                child: Card(
-                  child: ListTile(
-                    title: Text(scannerResult ?? "No Result"),
+              // SizedBox(
+              //   width: double.infinity,
+              //   height: 200,
+              //   child: Card(
+              //     child: ListTile(
+              //       title: Text(scannerResult ?? "No Result"),
+              //     ),
+              //   ),
+              // ),
+              // qrLink(context, hasResult, scannerResult),
+              // qrLink(context, hasFaseResult, scannerResult),
+              // qrLink(context, hasLineResult, scannerResult),
+              // qrLink(context, hasYouResult, scannerResult),
+              // ElevatedButton(
+              //   onPressed: _imagePickerFromGallory,
+              //   child: Text("Select Image"),
+              // ),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    hintText: "Pleace enter title",
                   ),
+                  controller: _title,
                 ),
               ),
-              qrLink(context, hasResult, scannerResult),
-              qrLink(context, hasFaseResult, scannerResult),
-              qrLink(context, hasLineResult, scannerResult),
-              qrLink(context, hasYouResult, scannerResult),
               ElevatedButton(
-                onPressed: _imagePickerFromGallory,
-                child: Text("Select Image"),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => QRCodeGenerator(
+                        qrData: _title.text,
+                      ),
+                    ),
+                  );
+                }, child: Text("submit"),
               ),
             ],
           ),

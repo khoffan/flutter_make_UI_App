@@ -55,6 +55,8 @@ dependencies:
   uuid: ^3.0.7
   font_awesome_flutter: ^10.5.0
   linkify: ^5.0.0
+  qr_flutter: ^4.1.0
+  promptpay_qrcode_generate: ^1.0.1
 
 flutter_icons:
   android: true
