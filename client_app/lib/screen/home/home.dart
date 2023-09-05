@@ -27,7 +27,7 @@ class ContentList extends StatelessWidget {
   final ContentService _service = ContentService();
   FirebaseAuth _auth = FirebaseAuth.instance;
 
-  void saveComment(String uid, String docid, String name, String docuserid) async {
+  void saveComment(String uid, String docid, String name) async {
     try {
       String comment = _commentController.text;
       if (comment.isEmpty) {
@@ -36,7 +36,7 @@ class ContentList extends StatelessWidget {
       final contentData = {
         'name': name,
         'comment': comment,
-        'contentid': docuserid,
+        'contentid': docid,
         'date': Timestamp.now(),
       };
 
@@ -219,10 +219,10 @@ class ContentList extends StatelessWidget {
                     IconButton(
                       onPressed: () {
                         if (_fromkey.currentState!.validate()) {
-                          saveComment(uid, docid, name, docid);
+                          saveComment(uid, docid, name);
                         }
                       },
-                      icon: Icon(Icons.send_and_archive),
+                      icon: Icon(Icons.send_outlined),
                     ),
                   ],
                 ),
