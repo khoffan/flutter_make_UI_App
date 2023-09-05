@@ -66,6 +66,27 @@ class ContentService {
       throw e.toString();
     }
   }
+  
+  Future<void> saveContentComment(String uid, Map<String, dynamic> contentData) async {
+    // Save new content document to Firestore
+    try {
+      final status = await getStatus(uid);
+
+      await FirebaseFirestore.instance
+          .collection('contents')
+          .doc(uid)
+          .set({
+        'status': status, // Add the status field
+      });
+
+      final contentDocRef = FirebaseFirestore.instance
+          .collection('contents')
+          .doc(uid);
+      await contentDocRef.collection('comments').add(contentData);
+    } catch (e) {
+      throw e.toString();
+    }
+  }
 
   Future<void> setSataus(bool status, String uid) async {
     try {
